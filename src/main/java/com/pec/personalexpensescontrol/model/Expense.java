@@ -12,7 +12,9 @@ import java.util.Date;
 @NoArgsConstructor
 public class Expense {
     private String expenseName;
+    @NotNull(message = "expenseCreatedDate must not be null")
     private Date expenseCreatedDate;
+    @NotNull(message = "expenseLastUpdatedDate must not be null")
     private Date expenseLastUpdatedDate;
     private long amount;
     private int currentParcel;

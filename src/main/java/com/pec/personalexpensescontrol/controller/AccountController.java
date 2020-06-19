@@ -2,8 +2,6 @@ package com.pec.personalexpensescontrol.controller;
 
 import com.pec.personalexpensescontrol.model.Expense;
 import com.pec.personalexpensescontrol.service.ExpenseService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,9 +20,9 @@ public class AccountController {
     public ResponseEntity createExpense(@PathVariable("userId") String userId, @RequestBody Expense expense) {
         try {
             expenseService.createExpense(userId, expense);
-            return ResponseEntity.ok().build();
+            return ResponseEntity.ok().body("Despesa criada com sucesso");
         } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.badRequest().body("Não foi possível criar a despesa :(");
         }
     }
 

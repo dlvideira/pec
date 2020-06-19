@@ -8,7 +8,9 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -18,9 +20,17 @@ public class User {
     @Id
     private ObjectId id;
     private String userName;
-    private Expense expense;
+    private List<Expense> expenses;
     @NotNull(message = "createdDate must not be null")
     private Date createdDate;
     @NotNull(message = "lastUpdatedDate must not be null")
     private Date lastUpdatedDate;
+
+    public void addExpense(Expense expense){
+        if(expenses == null){
+            expenses = new ArrayList<>();
+
+            expenses.add(expense);
+        }
+    }
 }
