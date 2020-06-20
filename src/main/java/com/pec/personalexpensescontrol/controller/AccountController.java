@@ -20,10 +20,37 @@ public class AccountController {
     public ResponseEntity createExpense(@PathVariable("userId") String userId, @RequestBody Expense expense) {
         try {
             expenseService.createExpense(userId, expense);
-            return ResponseEntity.ok().body("Despesa criada com sucesso");
+            // TODO mongoTemplate sempre retorna 200, validar response
+            return ResponseEntity.ok().body("Despesa " + expense.getExpenseName() + " criada com sucesso");
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Não foi possível criar a despesa :(");
+            return ResponseEntity.badRequest().body("Não foi possível criar a despesa "  + expense.getExpenseName() + ":(");
         }
     }
 
+    @PostMapping("/expenses/{userId}/updateExpense")
+    public ResponseEntity updateExpense(@PathVariable("userId") String userId, @RequestBody Expense expense){
+        try {
+            //TODO tratar response
+            //expenseService.updateExpense(userId, expense);
+            return ResponseEntity.ok().body(expenseService.updateExpense(userId, expense));
+           // return ResponseEntity.ok().body("Despesa " + expense.getExpenseName() + " atualizada com sucesso");
+        } catch (Exception e) {
+            return ResponseEntity.ok().body(expenseService.updateExpense(userId, expense));
+
+            //return ResponseEntity.badRequest().body("Não foi possível atualizar a despesa "  + expense.getExpenseName() + ":(");
+        }
+    }
+    @DeleteMapping("/expenses/{userId}/deleteExpense/{expenseName}")
+    public ResponseEntity deleteExpense(@PathVariable("userId") String userId, @PathVariable("expenseName") String expenseName){
+        try {
+            //TODO tratar response
+            //expenseService.updateExpense(userId, expense);
+            return ResponseEntity.ok().body(expenseService.deleteExpense(userId, expenseName));
+            // return ResponseEntity.ok().body("Despesa " + expense.getExpenseName() + " atualizada com sucesso");
+        } catch (Exception e) {
+            return ResponseEntity.ok().body(expenseService.deleteExpense(userId, expenseName));
+
+            //return ResponseEntity.badRequest().body("Não foi possível atualizar a despesa "  + expense.getExpenseName() + ":(");
+        }
+    }
 }

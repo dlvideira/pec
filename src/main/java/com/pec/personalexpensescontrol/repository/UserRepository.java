@@ -1,5 +1,6 @@
 package com.pec.personalexpensescontrol.repository;
 
+import com.pec.personalexpensescontrol.model.Expense;
 import com.pec.personalexpensescontrol.model.QUser;
 import com.pec.personalexpensescontrol.model.User;
 import com.querydsl.core.types.dsl.StringPath;
@@ -9,11 +10,13 @@ import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.data.querydsl.binding.QuerydslBinderCustomizer;
 import org.springframework.data.querydsl.binding.QuerydslBindings;
 
+import java.util.Optional;
+
 
 public interface UserRepository extends MongoRepository<User, ObjectId>,
         QuerydslPredicateExecutor<User>,
         QuerydslBinderCustomizer<QUser> {
-    User findById(String userId);
+    Optional<User> findById(String userId);
 
     default void customize(QuerydslBindings bindings, QUser user) {
         bindings.bind(String.class)
