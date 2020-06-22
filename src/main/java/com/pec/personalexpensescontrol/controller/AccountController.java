@@ -53,4 +53,12 @@ public class AccountController {
             //return ResponseEntity.badRequest().body("Não foi possível atualizar a despesa "  + expense.getExpenseName() + ":(");
         }
     }
+
+    @DeleteMapping("/expenses/{userId}/deleteAll")
+    public ResponseEntity deleteAll(@PathVariable("userId") String userId){
+        var response = expenseService.deleteAllExpenses(userId);
+        if (response.isPresent()){
+            return ResponseEntity.ok().body("Todas as despesas foram deletadas com sucesso");
+        } return ResponseEntity.ok().body("Poxa, não consegui deletar todas as despesas. :( \nTente novamente");
+    }
 }

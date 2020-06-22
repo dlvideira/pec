@@ -1,12 +1,10 @@
 package com.pec.personalexpensescontrol.service;
 
-import com.mongodb.client.result.UpdateResult;
 import com.pec.personalexpensescontrol.model.Expense;
 import com.pec.personalexpensescontrol.model.User;
 import com.pec.personalexpensescontrol.repository.UserRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 
@@ -14,10 +12,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 
@@ -30,6 +25,8 @@ public class ExpenseService {
     private MongoTemplate mongoTemplate;
 
     public void createExpense(String userId, Expense expenseBody) {
+        //TODO usar optional se possivel
+        //TODO dar um jeito de capturar o retorno e mandar para o controller
         Expense expense = new Expense();
         new ModelMapper().map(expenseBody, expense);
         expense.setExpenseCreatedDate(new Date());
@@ -42,7 +39,7 @@ public class ExpenseService {
         mongoTemplate.updateFirst(Query.query(criteria), update, User.class);
     }
 
-    public Object updateExpense(String userId, Expense expenseBody) {
+    public Optional updateExpense(String userId, Expense expenseBody) {
         var user = userRepository.findById(userId);
         if(user.isPresent()) {
             List<Expense> userExpenses = user.get().getExpenses();
@@ -63,7 +60,7 @@ public class ExpenseService {
         return Optional.empty();
     }
 
-    public Object deleteExpense(String userId, String expenseName) {
+    public Optional deleteExpense(String userId, String expenseName) {
         var user = userRepository.findById(userId);
         if(user.isPresent()){
             List<Expense> userExpenses = user.get().getExpenses();
@@ -74,7 +71,15 @@ public class ExpenseService {
         return Optional.empty();
     }
 
-    public void deleteAllExpenses() {
+    public Optional deleteAllExpenses(String userId) {
+        //TODO n'ao esta deltando, esta criando uma nova vazia
+        var user = userRepository.findById(userId);
+        if(user.isPresent()){
+            user.get().setExpenses(Collections.singletonList(new Expense()));
+            userRepository.save(user.get());
+            return Optional.of(new User());
+        }
+        return Optional.empty();
 
     }
 
