@@ -12,8 +12,12 @@ public class AccountController {
     private ExpenseService expenseService;
 
     @GetMapping("/expenses/{userId}")
-    public ResponseEntity getExpenses(String userId) {
-        return null;
+    public ResponseEntity getExpenses(@PathVariable("userId") String userId){
+        var response = expenseService.getAllExpenses(userId);
+        if (!response.isEmpty()){
+            return ResponseEntity.ok().body(response);
+        }
+        return ResponseEntity.badRequest().body("Não encontrei o usuário :( \nTente novamente.");
     }
 
     @PostMapping("/expenses/{userId}/createExpense")
