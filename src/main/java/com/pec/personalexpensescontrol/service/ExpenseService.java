@@ -3,6 +3,7 @@ package com.pec.personalexpensescontrol.service;
 import com.pec.personalexpensescontrol.model.Expense;
 import com.pec.personalexpensescontrol.model.User;
 import com.pec.personalexpensescontrol.repository.UserRepository;
+import org.joda.time.DateTime;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -12,7 +13,6 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,17 +27,17 @@ public class ExpenseService {
 
     public boolean createExpense(String userId, Expense expenseBody) {
         //TODO usar optional se possivel
-        //TODO melhorar a validacao
         Expense expense = new Expense();
         new ModelMapper().map(expenseBody, expense);
-        expense.setExpenseCreatedDate(new Date());
-        expense.setExpenseLastUpdatedDate(new Date());
+        expense.setExpenseCreatedDate(new DateTime());
+        expense.setExpenseLastUpdatedDate(new DateTime());
         Criteria criteria = where("_id").is(userId)
                 .and("expenses.expenseName")
                 .ne(expense.getExpenseName());
         Update update = new Update();
         update.addToSet("expenses", expense);
         var response = mongoTemplate.updateFirst(Query.query(criteria), update, User.class);
+        //TODO melhorar a validacao
         return response.getMatchedCount() > 0;
     }
 
@@ -49,13 +49,11 @@ public class ExpenseService {
                     .filter(item -> item.getExpenseName().equals(expenseBody.getExpenseName()))
                     .findFirst()
                     .ifPresent(item -> {
-                        //TODO tentar um mapper (item, expenseBody)
-                        item.setAmount(expenseBody.getAmount());
-                        item.setExpenseLastUpdatedDate(new Date());
-                        item.setCategory(expenseBody.getCategory());
-                        item.setCurrentParcel(expenseBody.getCurrentParcel());
-                        item.setTotalParcels(expenseBody.getTotalParcels());
-                        item.setFrequency(expenseBody.getFrequency());
+                        //TODO melhorar o mapper (conservar o createdDate)
+                        var createdDate = item.getExpenseCreatedDate();
+                        new ModelMapper().map(expenseBody, item);
+                        item.setExpenseCreatedDate(createdDate);
+                        item.setExpenseLastUpdatedDate(new DateTime());
                     });
             userRepository.save(user.get());
             return Optional.of(new User());
