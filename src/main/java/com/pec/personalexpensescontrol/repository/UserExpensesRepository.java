@@ -12,11 +12,10 @@ import org.springframework.data.querydsl.binding.QuerydslBindings;
 import java.util.Optional;
 
 
-public interface UserRepository extends MongoRepository<UserExpense, ObjectId>,
+public interface UserExpensesRepository extends MongoRepository<UserExpense, ObjectId>,
         QuerydslPredicateExecutor<UserExpense>,
         QuerydslBinderCustomizer<QUser> {
     Optional<UserExpense> findById(String userId);
-    String findByEmail (String email);
 
     default void customize(QuerydslBindings bindings, QUser user) {
         bindings.bind(String.class)

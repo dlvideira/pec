@@ -14,13 +14,12 @@ public class UserController {
     private UserService userService;
 
     @PostMapping("/account/createAccount")
-    ///TODO terminar de implementar esse controller (senha, hash, salt, etc)
-    public ResponseEntity createAccount(@RequestBody User newUser) {
+    public ResponseEntity createAccount(@RequestBody User user) {
         try {
-            userService.createAccount(newUser);
-            return ResponseEntity.accepted().build();
+            userService.createAccount(user);
+            return ResponseEntity.accepted().body("Conta criada com sucesso!\n Agora você pode fazer login e começar a usar o PEC :)");
         } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.status(409).body(e.getMessage());
         }
     }
 }
