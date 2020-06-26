@@ -17,7 +17,7 @@ public class AccountController {
         if (!response.isEmpty()) {
             return ResponseEntity.ok().body(response);
         }
-        return ResponseEntity.badRequest().body("Não encontrei o usuário :( \nTente novamente.");
+        return ResponseEntity.badRequest().body("Não encontrei nenhum registro :(");
     }
 
     @PostMapping("/expenses/{userId}/createExpense")

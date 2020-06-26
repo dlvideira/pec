@@ -12,7 +12,7 @@ import org.springframework.data.querydsl.binding.QuerydslBindings;
 import java.util.Optional;
 
 
-public interface UserExpensesRepository extends MongoRepository<UserExpense, ObjectId>,
+public interface UserExpenseRepository extends MongoRepository<UserExpense, ObjectId>,
         QuerydslPredicateExecutor<UserExpense>,
         QuerydslBinderCustomizer<QUser> {
     Optional<UserExpense> findById(String userId);
