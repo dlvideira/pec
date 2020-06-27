@@ -18,6 +18,8 @@ public class UserService {
     public void createAccount(User newUser) throws Exception {
         if(emailExist(newUser.getEmail()).isPresent())
             throw new Exception("Já existe uma conta associada com esse email.\nVocê esqueceu seu usuário?");
+         //TODO criar errorHandling class para Exception
+
 
         User user = new User();
                 user.setUserName(newUser.getUserName());

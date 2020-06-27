@@ -46,6 +46,7 @@ public class ExpenseService {
                 .and("expenses.expenseName")
                 .ne(expense.getExpenseName());
         Update update = new Update().addToSet("expenses", expense);
+        //TODO testar PUT no lugar de POST
         var response = mongoTemplate.updateFirst(Query.query(criteria), update, UserExpense.class);
         //TODO melhorar a validacao
         return response.getMatchedCount() > 0;
