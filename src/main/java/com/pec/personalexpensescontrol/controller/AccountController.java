@@ -22,11 +22,12 @@ public class AccountController {
 
     @PostMapping("/expenses/{userId}/createExpense")
     public ResponseEntity createExpense(@PathVariable("userId") String userId, @RequestBody Expense expense) {
-        var response = expenseService.createExpense(userId, expense);
-        if (response) {
-            return ResponseEntity.ok().body("Despesa " + expense.getExpenseName() + " criada com sucesso!");
+        try {
+            expenseService.createExpense(userId, expense);
+            return ResponseEntity.accepted().body("Despesa " + expense.getExpenseName() + " criada com sucesso!");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
-        return ResponseEntity.badRequest().body("Não foi possível criar a despesa " + expense.getExpenseName() + ":( \nTente novamente.");
     }
 
     @PostMapping("/expenses/{userId}/updateExpense")

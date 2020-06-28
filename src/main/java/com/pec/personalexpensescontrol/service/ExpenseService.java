@@ -29,26 +29,24 @@ public class ExpenseService {
         var user = userExpenseRepository.findById(userId);
         if (user.isPresent()) {
             List<Expense> userExpenses = user.get().getExpenses();
-            if(userExpenses != null)
+            if (userExpenses != null)
                 return userExpenses;
             return new ArrayList<>();
         }
         return new ArrayList<>();
     }
 
-    public boolean createExpense(String userId, Expense expenseBody) {
-        //TODO usar optional se possivel
+    public boolean createExpense(String userId, Expense expenseBody) throws Exception {
+        if (expenseNameExist(userId, expenseBody.getExpenseName()))
+            throw new Exception("Já existe uma despesa com esse nome.");
+        //TODO jogar na errorHandling class para Exception
         Expense expense = new Expense();
         new ModelMapper().map(expenseBody, expense);
         expense.setExpenseCreatedDate(new Date());
         expense.setExpenseLastUpdatedDate(new Date());
-        Criteria criteria = where("_id").is(userId)
-                .and("expenses.expenseName")
-                .ne(expense.getExpenseName());
+        Criteria criteria = where("_id").is(userId);
         Update update = new Update().addToSet("expenses", expense);
-        //TODO testar PUT no lugar de POST
         var response = mongoTemplate.updateFirst(Query.query(criteria), update, UserExpense.class);
-        //TODO melhorar a validacao
         return response.getMatchedCount() > 0;
     }
 
@@ -90,5 +88,9 @@ public class ExpenseService {
             return Optional.of(user);
         }
         return Optional.empty();
+    }
+
+    private boolean expenseNameExist(String userId, String expenseName) {
+        return userExpenseRepository.findByIdAndExpensesExpenseName(userId, expenseName).isPresent();
     }
 }
