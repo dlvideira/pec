@@ -1,6 +1,6 @@
 package com.pec.personalexpensescontrol.repository;
 
-import com.pec.personalexpensescontrol.model.User;
+import com.pec.personalexpensescontrol.infra.security.User;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.repository.MongoRepository;
 

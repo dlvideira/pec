@@ -3,3 +3,6 @@ spring:
   data.mongodb:
     uri: mongodb+srv://react:yTpC0pzPCWnxaDbo@cluster0.ro2ul.gcp.mongodb.net/pec?retryWrites=true&w=majority;
 
+adminUser:
+  email: admin@pec.com.br
+  password: admin
