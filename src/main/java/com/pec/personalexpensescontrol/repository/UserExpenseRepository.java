@@ -1,6 +1,6 @@
 package com.pec.personalexpensescontrol.repository;
 
-import com.pec.personalexpensescontrol.model.QUser;
+import com.pec.personalexpensescontrol.infra.security.QUser;
 import com.pec.personalexpensescontrol.model.UserExpense;
 import com.querydsl.core.types.dsl.StringPath;
 import org.bson.types.ObjectId;

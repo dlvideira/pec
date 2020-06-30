@@ -1,6 +1,7 @@
 package com.pec.personalexpensescontrol.service;
 
-import com.pec.personalexpensescontrol.model.User;
+import com.pec.personalexpensescontrol.infra.security.Role;
+import com.pec.personalexpensescontrol.infra.security.User;
 import com.pec.personalexpensescontrol.repository.UserManagementRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -23,6 +24,10 @@ public class UserService {
         user.setUserName(newUser.getUserName());
         user.setPassword(passwordEncoder.encode(newUser.getPassword()));
         user.setEmail(newUser.getEmail());
+        user.setRole(Role.USER);
+        user.setActive(true);
+      //  var user = User.create(newUser.getUserName(), newUser.getPassword(), newUser.getEmail(), newUser.getRole(), newUser.isActive());
+
         userManagementRepository.save(user);
     }
 
