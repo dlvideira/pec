@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.Date;
 import java.util.Optional;
 
 @Service
@@ -15,20 +14,30 @@ public class BankAccountService {
     private BankAccountRepository bankAccountRepository;
 
     public void createBankAccount(BankAccount newBankAccount) throws Exception {
-        if (bankAccountExist(newBankAccount.getBankAccount()).isPresent())
+        if (bankAccountExist(newBankAccount.getBankAccountNumber(), newBankAccount.getBankName()).isPresent())
             throw new Exception("Conta bancária já existe para este usuário");
         //TODO abstrair as exceptions quando criarmos a classe de exception
 
         BankAccount bankAccount = new BankAccount();
         bankAccount.setBankName(newBankAccount.getBankName());
         bankAccount.setBankAgency(newBankAccount.getBankAgency());
-        bankAccount.setBankAccount(newBankAccount.getBankAccount());
+        bankAccount.setBankAccountNumber(newBankAccount.getBankAccountNumber());
         bankAccount.setAccountBalance(new BigDecimal(0));
-        bankAccount.setBalanceUpdatedDate(new Date());
         bankAccountRepository.save(bankAccount);
     }
 
-    private Optional bankAccountExist(String bankAccount) {
-        return bankAccountRepository.findByBankAccount(bankAccount);
+    public void updateBankAccountBalance(String bankAccountId, BigDecimal value) {
+        var bankAccountToUpdateBalance = bankAccountRepository.findById(bankAccountId);
+        if (bankAccountToUpdateBalance.isPresent()) {
+            BigDecimal balance = bankAccountToUpdateBalance.get().getAccountBalance();
+            balance = balance.add(value);
+
+            bankAccountToUpdateBalance.get().setAccountBalance(balance);
+            bankAccountRepository.save(bankAccountToUpdateBalance.get());
+        }
+    }
+
+    private Optional bankAccountExist(String bankAccount, String bankName) {
+        return bankAccountRepository.findByBankAccountNumberAndBankName(bankAccount, bankName);
     }
 }
