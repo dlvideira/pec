@@ -36,7 +36,7 @@ public class ExpenseService {
         return new ArrayList<>();
     }
 
-    public boolean createExpense(String userId, Expense expenseBody) throws Exception {
+    public void createExpense(String userId, Expense expenseBody) throws Exception {
         if (expenseNameExist(userId, expenseBody.getExpenseName()))
             throw new Exception("Já existe uma despesa com esse nome.");
 
@@ -47,10 +47,10 @@ public class ExpenseService {
         Criteria criteria = where("_id").is(userId);
         Update update = new Update().addToSet("expenses", expense);
         var response = mongoTemplate.updateFirst(Query.query(criteria), update, UserExpense.class);
-        return response.getMatchedCount() > 0;
+        response.getMatchedCount();
     }
 
-    public Optional updateExpense(String userId, Expense expenseBody) {
+    public Optional<UserExpense> updateExpense(String userId, Expense expenseBody) {
         var user = userExpenseRepository.findById(userId);
         if (user.isPresent()) {
             List<Expense> userExpenses = user.get().getExpenses();
@@ -64,28 +64,28 @@ public class ExpenseService {
                         item.setExpenseLastUpdatedDate(new Date());
                     });
             userExpenseRepository.save(user.get());
-            return Optional.of(user);
+            return user;
         }
         return Optional.empty();
     }
 
-    public Optional deleteExpense(String userId, String expenseName) {
+    public Optional<UserExpense> deleteExpense(String userId, String expenseName) {
         var user = userExpenseRepository.findById(userId);
         if (user.isPresent()) {
             List<Expense> userExpenses = user.get().getExpenses();
             userExpenses.removeIf(item -> item.getExpenseName().equals(expenseName));
             userExpenseRepository.save(user.get());
-            return Optional.of(user);
+            return user;
         }
         return Optional.empty();
     }
 
-    public Optional deleteAllExpenses(String userId) {
+    public Optional<UserExpense> deleteAllExpenses(String userId) {
         var user = userExpenseRepository.findById(userId);
         if (user.isPresent()) {
             user.get().setExpenses(null);
             userExpenseRepository.save(user.get());
-            return Optional.of(user);
+            return user;
         }
         return Optional.empty();
     }

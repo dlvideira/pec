@@ -27,11 +27,11 @@ public class UserService {
                 newUserRequest.getEmail(),
                 newUserRequest.getRole(),
                 true);
-
+        // TODO criar userExpense j[a com o userId bindado
         userManagementRepository.save(user);
     }
 
-    public Optional updateEmail(String userId, String newUserEmail) throws Exception {
+    public Optional<User> updateEmail(String userId, String newUserEmail) throws Exception {
         if (emailExist(newUserEmail))
             throw new Exception("Já existe uma conta associada com esse email.");
 
@@ -39,33 +39,29 @@ public class UserService {
         if (user.isPresent()) {
             user.get().setEmail(newUserEmail);
             userManagementRepository.save(user.get());
-            return Optional.of(user);
+            return user;
         }
         return Optional.empty();
     }
 
-    public Optional updateUsername(String userId, String newUsername) {
+    public Optional<User> updateUsername(String userId, String newUsername) {
         var user = userManagementRepository.findById(userId);
         if (user.isPresent()) {
             user.get().setUserName(newUsername);
             userManagementRepository.save(user.get());
-            return Optional.of(user);
+            return user;
         }
         return Optional.empty();
     }
 
-    public Optional updateUserActiveStatus(String userId) {
+    public Optional<User> updateUserActiveStatus(String userId) {
         var user = userManagementRepository.findById(userId);
         if (user.isPresent()) {
-           // user.get().isActive() ? user.get().setActive(false) : user.get().setActive(true);
+            // user.get().isActive() ? user.get().setActive(false) : user.get().setActive(true);
             //TODO porque esse ternario nao funciona?
-            if (user.get().isActive()) {
-                user.get().setActive(false);
-            } else {
-                user.get().setActive(true);
-            }
+            user.get().setActive(!user.get().isActive());
             userManagementRepository.save(user.get());
-            return Optional.of(user);
+            return user;
         }
         return Optional.empty();
     }
