@@ -39,7 +39,7 @@ public class ExpenseService {
     public boolean createExpense(String userId, Expense expenseBody) throws Exception {
         if (expenseNameExist(userId, expenseBody.getExpenseName()))
             throw new Exception("Já existe uma despesa com esse nome.");
-        //TODO jogar na errorHandling class para Exception
+
         Expense expense = new Expense();
         new ModelMapper().map(expenseBody, expense);
         expense.setExpenseCreatedDate(new Date());

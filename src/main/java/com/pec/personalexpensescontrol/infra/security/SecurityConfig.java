@@ -1,18 +1,13 @@
 package com.pec.personalexpensescontrol.infra.security;
 
-import com.querydsl.core.annotations.Config;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.security.servlet.SpringBootWebSecurityConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.session.HttpSessionEventPublisher;
@@ -31,22 +26,30 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .antMatchers("/admin").hasRole("ADMIN")
+/*                .antMatchers("/admin").hasRole("ADMIN")
                 .antMatchers("/user").hasAnyRole("ADMIN", "USER")
-                //.antMatchers("/**").hasRole("ADMIN")
-                .antMatchers("/").permitAll()
-                .antMatchers("/account/**").permitAll()
+                .antMatchers("/**").hasRole("ADMIN")
+                .antMatchers("/").permitAll()*/
+                .antMatchers("/**").permitAll()
                 .and().formLogin();
         //TODO porque consigo ver o /users mesmo sem mapear no controller?
-        //TODO trabalhar roles
 
-        http.logout().invalidateHttpSession(true).clearAuthentication(true).logoutRequestMatcher(new AntPathRequestMatcher("/logout")).logoutSuccessUrl("/login?logout").permitAll();
+        http.logout()
+                .invalidateHttpSession(true)
+                .clearAuthentication(true)
+                .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+                .logoutSuccessUrl("/login?logout")
+                .permitAll();
 
         http.rememberMe();
 
-        http.csrf().disable();
+        http.csrf()
+                .disable();
 
-        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.ALWAYS).sessionFixation().migrateSession();
+        http.sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
+                .sessionFixation()
+                .migrateSession();
 
         http.httpBasic();
     }
@@ -69,7 +72,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     private void createInitialAdmin() {
-        if(!userDetailService.exists(adminEmail)) {
+        if (!userDetailService.exists(adminEmail)) {
             var admin = User.create("admin", passwordEncoder().encode(adminPassword), adminEmail, Role.ADMIN, true);
             userDetailService.save(admin);
         }

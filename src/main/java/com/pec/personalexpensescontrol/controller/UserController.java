@@ -4,9 +4,7 @@ import com.pec.personalexpensescontrol.infra.security.User;
 import com.pec.personalexpensescontrol.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class UserController {
@@ -21,5 +19,37 @@ public class UserController {
         } catch (Exception e) {
             return ResponseEntity.status(409).body(e.getMessage());
         }
+    }
+
+    //TODO testar email
+    @PatchMapping("/account/{userId}/updateUserEmail")
+    public ResponseEntity updateUserEmail(@PathVariable("userId") String userId, String newUserEmail) {
+        try {
+            var response = userService.updateEmail(userId, newUserEmail);
+            if (response.isPresent()) {
+                return ResponseEntity.ok().body("E-mail atualizado com sucesso!");
+            }
+            return ResponseEntity.ok().body("Não consegui atualizar o email agora,");
+        } catch (Exception e) {
+            return ResponseEntity.status(409).body(e.getMessage());
+        }
+    }
+
+    @PatchMapping("/account/{userId}/updateUsername")
+    public ResponseEntity updateUserName(@PathVariable("userId") String userId, @RequestParam("newUsername") String newUsername) {
+        var response = userService.updateUsername(userId, newUsername);
+        if (response.isPresent()) {
+            return ResponseEntity.ok().body("Nome de usuário atualizado com sucesso!");
+        }
+        return ResponseEntity.ok().body("Não consegui atualizar o nome de usuário agora,");
+    }
+
+    @PatchMapping("/account/{userId}/updateUserActive")
+    public ResponseEntity updateUserActiveStatus(@PathVariable("userId") String userId) {
+        var response = userService.updateUserActiveStatus(userId);
+        if (response.isPresent()) {
+            return ResponseEntity.ok().body("Status atualizado com sucesso!");
+        }
+        return ResponseEntity.ok().body("Não consegui atualizar o status agora,");
     }
 }
