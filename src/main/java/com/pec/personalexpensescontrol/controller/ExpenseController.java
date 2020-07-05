@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-public class AccountController {
+public class ExpenseController {
     @Autowired
     private ExpenseService expenseService;
 
