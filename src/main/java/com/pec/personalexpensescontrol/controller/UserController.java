@@ -21,9 +21,8 @@ public class UserController {
         }
     }
 
-    //TODO testar email
     @PatchMapping("/account/{userId}/updateUserEmail")
-    public ResponseEntity updateUserEmail(@PathVariable("userId") String userId, String newUserEmail) {
+    public ResponseEntity updateUserEmail(@PathVariable("userId") String userId, @RequestParam("newUserEmail") String newUserEmail) {
         try {
             var response = userService.updateEmail(userId, newUserEmail);
             if (response.isPresent()) {

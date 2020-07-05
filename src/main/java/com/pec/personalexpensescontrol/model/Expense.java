@@ -13,10 +13,10 @@ import java.util.Date;
 @NoArgsConstructor
 public class Expense {
     private ObjectId expenseId = new ObjectId();
-    @NotNull(message = "expenseName must not be null")
-    private String expenseName;
     private Date expenseCreatedDate;
     private Date expenseLastUpdatedDate;
+    @NotNull(message = "expenseName must not be null")
+    private String expenseName;
     @NotNull(message = "amount must not be null")
     private long amount;
     private int currentParcel;
