@@ -15,7 +15,7 @@ import javax.validation.constraints.NotNull;
 @Document(collection = "userManagement")
 public class User extends AbstractMongoModel {
     @NotNull
-    private String userName;
+    private String username;
     @NotNull
     private String password;
     @NotNull

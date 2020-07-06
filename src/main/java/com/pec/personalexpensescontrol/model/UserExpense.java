@@ -15,7 +15,6 @@ import java.util.List;
 @Document(collection = "userExpenses")
 public class UserExpense extends AbstractMongoModel {
     @NotNull
-    private String userName;
-    @Nullable
+    private String userId;
     private List<Expense> expenses;
 }

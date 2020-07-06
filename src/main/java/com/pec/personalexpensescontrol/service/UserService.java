@@ -16,19 +16,21 @@ public class UserService {
     UserManagementRepository userManagementRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private ExpenseService expenseService;
 
     public void createAccount(User newUserRequest) throws Exception {
         if (emailExist(newUserRequest.getEmail()))
-            throw new Exception("Já existe uma conta associada com esse email.\nVocê esqueceu seu usuário?");
+            throw new Exception("Já existe uma conta associada com esse email.\nVocê esqueceu sua senha?");
 
         var user = create(
-                newUserRequest.getUserName(),
+                newUserRequest.getUsername(),
                 passwordEncoder.encode(newUserRequest.getPassword()),
                 newUserRequest.getEmail(),
                 newUserRequest.getRole(),
                 true);
-        // TODO criar userExpense j[a com o userId bindado
-        userManagementRepository.save(user);
+        var createdUser = userManagementRepository.save(user);
+        expenseService.intializeExpenses(createdUser.getId());
     }
 
     public Optional<User> updateEmail(String userId, String newUserEmail) throws Exception {
@@ -47,7 +49,7 @@ public class UserService {
     public Optional<User> updateUsername(String userId, String newUsername) {
         var user = userManagementRepository.findById(userId);
         if (user.isPresent()) {
-            user.get().setUserName(newUsername);
+            user.get().setUsername(newUsername);
             userManagementRepository.save(user.get());
             return user;
         }
@@ -57,8 +59,6 @@ public class UserService {
     public Optional<User> updateUserActiveStatus(String userId) {
         var user = userManagementRepository.findById(userId);
         if (user.isPresent()) {
-            // user.get().isActive() ? user.get().setActive(false) : user.get().setActive(true);
-            //TODO porque esse ternario nao funciona?
             user.get().setActive(!user.get().isActive());
             userManagementRepository.save(user.get());
             return user;
