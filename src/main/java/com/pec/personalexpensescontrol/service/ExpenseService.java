@@ -93,4 +93,8 @@ public class ExpenseService {
     private boolean expenseNameExist(String userId, String expenseName) {
         return userExpenseRepository.findByIdAndExpensesExpenseName(userId, expenseName).isPresent();
     }
+
+    public void intializeExpenses(String userId) {
+        userExpenseRepository.save(new UserExpense(userId, null));
+    }
 }
