@@ -13,7 +13,7 @@ import static com.pec.personalexpensescontrol.infra.security.User.create;
 @Service
 public class UserService {
     @Autowired
-    UserManagementRepository userManagementRepository;
+    private UserManagementRepository userManagementRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
     @Autowired
@@ -66,7 +66,7 @@ public class UserService {
         return Optional.empty();
     }
 
-    private boolean emailExist(String email) {
+    public boolean emailExist(String email) {
         return userManagementRepository.findByEmail(email).isPresent();
     }
 }
