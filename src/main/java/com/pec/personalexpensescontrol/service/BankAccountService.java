@@ -1,43 +1,66 @@
 package com.pec.personalexpensescontrol.service;
 
 import com.pec.personalexpensescontrol.model.BankAccount;
-import com.pec.personalexpensescontrol.repository.BankAccountRepository;
+import com.pec.personalexpensescontrol.model.UserBankAccount;
+import com.pec.personalexpensescontrol.repository.UserBankAccountRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
-import java.util.Optional;
+import java.util.Date;
+import java.util.List;
+
+import static org.springframework.data.mongodb.core.query.Criteria.where;
 
 @Service
 public class BankAccountService {
     @Autowired
-    private BankAccountRepository bankAccountRepository;
+    private UserBankAccountRepository userBankAccountRepository;
+    @Autowired
+    private MongoTemplate mongoTemplate;
 
-    public void createBankAccount(BankAccount newBankAccount) throws Exception {
-        if (bankAccountExist(newBankAccount.getBankAccountNumber(), newBankAccount.getBankName()).isPresent())
-            throw new Exception("Conta bancária já existe para este usuário");
-        //TODO abstrair as exceptions quando criarmos a classe de exception
+    public void createBankAccount(String userId, BankAccount newBankAccount) throws Exception {
+        // if (bankAccountExist(userId, newBankAccount.getBankAccountId().toString());
+        //   throw new Exception("Conta bancária já existe para este usuário");
 
         BankAccount bankAccount = new BankAccount();
-        bankAccount.setBankName(newBankAccount.getBankName());
-        bankAccount.setBankAgency(newBankAccount.getBankAgency());
-        bankAccount.setBankAccountNumber(newBankAccount.getBankAccountNumber());
-        bankAccount.setAccountBalance(new BigDecimal(0));
-        bankAccountRepository.save(bankAccount);
+        new ModelMapper().map(newBankAccount, bankAccount);
+        bankAccount.setBankAccountCreatedDate(new Date());
+        bankAccount.setBankAccountLastUpdatedDate(new Date());
+        Criteria criteria = where("userId").is(userId);
+        Update update = new Update().addToSet("bankAccounts", bankAccount);
+        mongoTemplate.updateFirst(Query.query(criteria), update, UserBankAccount.class);
     }
 
-    public void updateBankAccountBalance(String bankAccountId, BigDecimal value) {
-        var bankAccountToUpdateBalance = bankAccountRepository.findById(bankAccountId);
+    public void updateBankAccountBalance(String userId, BankAccount bankAccount) {
+        var bankAccountToUpdateBalance = userBankAccountRepository.findByUserId(userId);
         if (bankAccountToUpdateBalance.isPresent()) {
-            BigDecimal balance = bankAccountToUpdateBalance.get().getAccountBalance();
-            balance = balance.add(value);
 
-            bankAccountToUpdateBalance.get().setAccountBalance(balance);
-            bankAccountRepository.save(bankAccountToUpdateBalance.get());
+            List<BankAccount> bankAccounts = bankAccountToUpdateBalance.get().getBankAccounts();
+            bankAccounts.stream()
+                    .filter(item -> item.getBankAccountId().equals(bankAccount.getBankAccountId()))
+                    .findFirst()
+                    .ifPresent(item -> {
+                        var createdDate = item.getBankAccountCreatedDate();
+                        item.setBankAccountCreatedDate(createdDate);
+                        item.setBankAccountLastUpdatedDate(new Date());
+                        item.setAccountBalance(item.getAccountBalance().add(bankAccount.getAccountBalance()));
+                    });
+
+            userBankAccountRepository.save(bankAccountToUpdateBalance.get());
         }
     }
 
-    private Optional bankAccountExist(String bankAccount, String bankName) {
-        return bankAccountRepository.findByBankAccountNumberAndBankName(bankAccount, bankName);
+
+    private boolean bankAccountExist(String userId, String bankAccountId) {
+        return userBankAccountRepository.findByUserIdAndBankAccountsBankAccountId(userId, bankAccountId).isPresent();
+    }
+
+    public void initializeBankAccounts(String userId) {
+        userBankAccountRepository.save(new UserBankAccount(userId, null));
     }
 }

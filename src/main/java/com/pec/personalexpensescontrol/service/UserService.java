@@ -18,6 +18,8 @@ public class UserService {
     private PasswordEncoder passwordEncoder;
     @Autowired
     private ExpenseService expenseService;
+    @Autowired
+    private BankAccountService bankAccountService;
 
     public void createAccount(User newUserRequest) throws Exception {
         if (emailExist(newUserRequest.getEmail()))
@@ -30,7 +32,9 @@ public class UserService {
                 newUserRequest.getRole(),
                 true);
         var createdUser = userManagementRepository.save(user);
-        expenseService.intializeExpenses(createdUser.getId());
+        expenseService.initializeExpenses(createdUser.getId());
+        bankAccountService.initializeBankAccounts(createdUser.getId());
+
     }
 
     public Optional<User> updateEmail(String userId, String newUserEmail) throws Exception {

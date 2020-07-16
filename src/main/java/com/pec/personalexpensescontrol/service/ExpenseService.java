@@ -94,7 +94,7 @@ public class ExpenseService {
         return userExpenseRepository.findByIdAndExpensesExpenseName(userId, expenseName).isPresent();
     }
 
-    public void intializeExpenses(String userId) {
+    public void initializeExpenses(String userId) {
         userExpenseRepository.save(new UserExpense(userId, null));
     }
 }
