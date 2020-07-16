@@ -14,8 +14,13 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Document(collection = "bankAccount")
-public class BankAccount extends AbstractMongoModel {
+public class BankAccount {
+    @NotNull
+    private ObjectId bankAccountId = new ObjectId();
+    @NotNull
+    private Date bankAccountCreatedDate;
+    @NotNull
+    private Date bankAccountLastUpdatedDate;
     @NotNull
     private String bankName;
     @NotNull

@@ -93,7 +93,7 @@ public class ExpenseService {
         return userExpenseRepository.findByUserIdAndExpensesExpenseName(userId, expenseName).isPresent();
     }
 
-    public void intializeExpenses(String userId) {
+    public void initializeExpenses(String userId) {
         userExpenseRepository.save(new UserExpense(userId, null));
     }
 }

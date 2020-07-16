@@ -37,8 +37,8 @@ public class UserServiceTest {
         when(userManagementRepository.save(any(User.class))).thenReturn(returnedUserMock);
         var saveResponseMock = userManagementRepository.save(user);
 
-        doNothing().when(expenseService).intializeExpenses(saveResponseMock.getId());
-        expenseService.intializeExpenses(saveResponseMock.getId());
+        doNothing().when(expenseService).initializeExpenses(saveResponseMock.getId());
+        expenseService.initializeExpenses(saveResponseMock.getId());
 
         assertNotNull(user.getUsername());
         assertNotNull(user.getPassword());
@@ -46,7 +46,7 @@ public class UserServiceTest {
         assertNotNull(saveResponseMock.getId());
         assertNotNull(saveResponseMock.getId());
 
-        verify(expenseService, times(1)).intializeExpenses(saveResponseMock.getId());
+        verify(expenseService, times(1)).initializeExpenses(saveResponseMock.getId());
         verify(userManagementRepository, times(1)).save(any(User.class));
     }
 
