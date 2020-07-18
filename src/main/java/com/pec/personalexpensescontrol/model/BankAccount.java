@@ -4,8 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.bson.types.ObjectId;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
@@ -15,18 +13,14 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public class BankAccount {
-    @NotNull
     private ObjectId bankAccountId = new ObjectId();
-    @NotNull
     private Date bankAccountCreatedDate;
-    @NotNull
     private Date bankAccountLastUpdatedDate;
-    @NotNull
+    @NotNull(message = "bankName must not be null")
     private String bankName;
-    @NotNull
+    @NotNull(message = "bankAgency must not be null")
     private String bankAgency;
-    @NotNull
+    @NotNull(message = "bankAccountNumber must not be null")
     private String bankAccountNumber;
     private BigDecimal accountBalance;
-
 }

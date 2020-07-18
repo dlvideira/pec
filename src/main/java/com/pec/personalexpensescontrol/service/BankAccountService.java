@@ -24,8 +24,8 @@ public class BankAccountService {
     private MongoTemplate mongoTemplate;
 
     public void createBankAccount(String userId, BankAccount newBankAccount) throws Exception {
-        // if (bankAccountExist(userId, newBankAccount.getBankAccountId().toString());
-        //   throw new Exception("Conta bancária já existe para este usuário");
+         if (bankAccountExist(userId, newBankAccount.getBankAccountNumber()))
+           throw new Exception("Conta bancária já existe para este usuário");
 
         BankAccount bankAccount = new BankAccount();
         new ModelMapper().map(newBankAccount, bankAccount);
@@ -50,14 +50,12 @@ public class BankAccountService {
                         item.setBankAccountLastUpdatedDate(new Date());
                         item.setAccountBalance(item.getAccountBalance().add(bankAccount.getAccountBalance()));
                     });
-
             userBankAccountRepository.save(bankAccountToUpdateBalance.get());
         }
     }
 
-
-    private boolean bankAccountExist(String userId, String bankAccountId) {
-        return userBankAccountRepository.findByUserIdAndBankAccountsBankAccountId(userId, bankAccountId).isPresent();
+    private boolean bankAccountExist(String userId, String bankAccountNumber) {
+        return userBankAccountRepository.findByUserIdAndBankAccountsBankAccountNumber(userId, bankAccountNumber).isPresent();
     }
 
     public void initializeBankAccounts(String userId) {

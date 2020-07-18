@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import org.bson.types.ObjectId;
 
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import java.util.Date;
 
 @Data
@@ -18,7 +19,7 @@ public class Expense {
     @NotNull(message = "expenseName must not be null")
     private String expenseName;
     @NotNull(message = "amount must not be null")
-    private long amount;
+    private BigDecimal amount;
     private int currentParcel;
     private int totalParcels;
     private int frequency;
