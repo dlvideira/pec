@@ -25,4 +25,3 @@ public class Expense {
     @NotNull(message = "category must not be null")
     private Category category;
 }
-///TODO tentar usar o AbstractMongoModel como o User.java (n'ao funciona em classe que não é Document??)

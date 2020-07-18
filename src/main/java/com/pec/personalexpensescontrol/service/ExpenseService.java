@@ -26,7 +26,7 @@ public class ExpenseService {
     private MongoTemplate mongoTemplate;
 
     public List<Expense> getAllExpenses(String userId) {
-        var user = userExpenseRepository.findById(userId);
+        var user = userExpenseRepository.findByUserId(userId);
         if (user.isPresent()) {
             List<Expense> userExpenses = user.get().getExpenses();
             if (userExpenses != null)
@@ -44,14 +44,13 @@ public class ExpenseService {
         new ModelMapper().map(expenseBody, expense);
         expense.setExpenseCreatedDate(new Date());
         expense.setExpenseLastUpdatedDate(new Date());
-        Criteria criteria = where("_id").is(userId);
+        Criteria criteria = where("userId").is(userId);
         Update update = new Update().addToSet("expenses", expense);
-        var response = mongoTemplate.updateFirst(Query.query(criteria), update, UserExpense.class);
-        response.getMatchedCount();
+        mongoTemplate.updateFirst(Query.query(criteria), update, UserExpense.class);
     }
 
     public Optional<UserExpense> updateExpense(String userId, Expense expenseBody) {
-        var user = userExpenseRepository.findById(userId);
+        var user = userExpenseRepository.findByUserId(userId);
         if (user.isPresent()) {
             List<Expense> userExpenses = user.get().getExpenses();
             userExpenses.stream()
@@ -70,7 +69,7 @@ public class ExpenseService {
     }
 
     public Optional<UserExpense> deleteExpense(String userId, String expenseName) {
-        var user = userExpenseRepository.findById(userId);
+        var user = userExpenseRepository.findByUserId(userId);
         if (user.isPresent()) {
             List<Expense> userExpenses = user.get().getExpenses();
             userExpenses.removeIf(item -> item.getExpenseName().equals(expenseName));
@@ -81,7 +80,7 @@ public class ExpenseService {
     }
 
     public Optional<UserExpense> deleteAllExpenses(String userId) {
-        var user = userExpenseRepository.findById(userId);
+        var user = userExpenseRepository.findByUserId(userId);
         if (user.isPresent()) {
             user.get().setExpenses(null);
             userExpenseRepository.save(user.get());
@@ -91,7 +90,7 @@ public class ExpenseService {
     }
 
     private boolean expenseNameExist(String userId, String expenseName) {
-        return userExpenseRepository.findByIdAndExpensesExpenseName(userId, expenseName).isPresent();
+        return userExpenseRepository.findByUserIdAndExpensesExpenseName(userId, expenseName).isPresent();
     }
 
     public void intializeExpenses(String userId) {
