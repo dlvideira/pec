@@ -12,7 +12,7 @@ import static com.pec.personalexpensescontrol.infra.security.User.create;
 
 @Service
 public class UserService {
-    @Autowired
+   @Autowired
     private UserManagementRepository userManagementRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -22,6 +22,8 @@ public class UserService {
     private BankAccountService bankAccountService;
 
     public void createAccount(User newUserRequest) throws Exception {
+        if (newUserRequest == null)
+            throw new Exception("É necessário preencher o formulário de criação de usuário");
         if (emailExist(newUserRequest.getEmail()))
             throw new Exception("Já existe uma conta associada com esse email.\nVocê esqueceu sua senha?");
 
@@ -34,7 +36,6 @@ public class UserService {
         var createdUser = userManagementRepository.save(user);
         expenseService.initializeExpenses(createdUser.getId());
         bankAccountService.initializeBankAccounts(createdUser.getId());
-
     }
 
     public Optional<User> updateEmail(String userId, String newUserEmail) throws Exception {

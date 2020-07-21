@@ -2,11 +2,18 @@ package com.pec.personalexpensescontrol.service;
 
 import com.pec.personalexpensescontrol.infra.security.User;
 import com.pec.personalexpensescontrol.repository.UserManagementRepository;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.mockito.Spy;
 import org.mockito.exceptions.base.MockitoException;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.stubbing.Answer;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Optional;
 
@@ -21,33 +28,96 @@ public class UserServiceTest {
     @Mock
     ExpenseService expenseService;
     @Mock
+    BankAccountService bankAccountService;
+    @InjectMocks
     UserService userService;
+    @Mock
+    private PasswordEncoder passwordEncoder;
+    @Before
+    public void initialize(){
+        MockitoAnnotations.initMocks(this);
+    }
 
-    @Test
-    public void createAccount() {
-        User user = User.create("testUser",
+    private User createUserMock(){
+        return User.create("testUser",
                 "testPass",
                 "testeEmail",
                 USER,
                 true);
+    }
+
+    @Test
+    public void createAccount() {
+        User userSut = createUserMock();
 
         User returnedUserMock = new User();
         returnedUserMock.setId("1111");
 
         when(userManagementRepository.save(any(User.class))).thenReturn(returnedUserMock);
-        var saveResponseMock = userManagementRepository.save(user);
+        var saveResponseMock = userManagementRepository.save(userSut);
 
         doNothing().when(expenseService).initializeExpenses(saveResponseMock.getId());
         expenseService.initializeExpenses(saveResponseMock.getId());
 
-        assertNotNull(user.getUsername());
-        assertNotNull(user.getPassword());
-        assertNotNull(user.getEmail());
+        assertNotNull(userSut.getUsername());
+        assertNotNull(userSut.getPassword());
+        assertNotNull(userSut.getEmail());
         assertNotNull(saveResponseMock.getId());
         assertNotNull(saveResponseMock.getId());
 
         verify(expenseService, times(1)).initializeExpenses(saveResponseMock.getId());
         verify(userManagementRepository, times(1)).save(any(User.class));
+    }
+
+    @Test(expected = Exception.class)
+    public void shouldThrowExceptionWhenNewUserRequestIsNull() throws Exception {
+        userService.createAccount(null);
+    }
+
+    @Test
+    public void shouldReturnUserWithIdAfterSaveWhenCreateAnAccount() {
+        //Arrange
+        User returnedUserMock = new User();
+        returnedUserMock.setId("1111");
+        when(userManagementRepository.save(any(User.class))).thenReturn(returnedUserMock);
+
+        //Act
+        var saveResponseMock = userManagementRepository.save(returnedUserMock);
+
+        //Assert
+        assertNotNull(saveResponseMock.getId());
+    }
+
+    @Test
+    public void shouldInitializeExpensesWhenCreateAnAccount() throws Exception {
+        //Arrange
+        User userMock = createUserMock();
+        userMock.setId("1111");
+        when(userManagementRepository.findByEmail(any(String.class))).thenReturn(Optional.empty());
+        when(userManagementRepository.save(any(User.class))).thenReturn(userMock);
+        when(passwordEncoder.encode(any(String.class))).thenReturn("encodedPass");
+
+        //Act
+        userService.createAccount(userMock);
+
+        //Assert
+        verify(expenseService, times(1)).initializeExpenses(userMock.getId());
+    }
+
+    @Test
+    public void shouldInitializeBanksWhenCreateAnAccount() throws Exception {
+        //Arrange
+        User userMock = createUserMock();
+        userMock.setId("1111");
+        when(userManagementRepository.findByEmail(any(String.class))).thenReturn(Optional.empty());
+        when(userManagementRepository.save(any(User.class))).thenReturn(userMock);
+        when(passwordEncoder.encode(any(String.class))).thenReturn("encodedPass");
+
+        //Act
+        userService.createAccount(userMock);
+
+        //Assert
+        verify(bankAccountService, times(1)).initializeBankAccounts(userMock.getId());
     }
 
     @Test
