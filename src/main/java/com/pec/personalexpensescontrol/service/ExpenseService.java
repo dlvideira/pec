@@ -37,7 +37,7 @@ public class ExpenseService {
     }
 
     public void createExpense(String userId, Expense expenseBody) throws Exception {
-        if (expenseNameExist(userId, expenseBody.getExpenseName()))
+        if (expenseIdExist(userId, expenseBody))
             throw new Exception("Já existe uma despesa com esse nome.");
 
         Expense expense = new Expense();
@@ -49,6 +49,7 @@ public class ExpenseService {
         mongoTemplate.updateFirst(Query.query(criteria), update, UserExpense.class);
     }
 
+    //TODO tratar despesa que não existe para esse userId e refatorar o get por ExpenseName para ExpenseId
     public Optional<UserExpense> updateExpense(String userId, Expense expenseBody) {
         var user = userExpenseRepository.findByUserId(userId);
         if (user.isPresent()) {
@@ -89,8 +90,8 @@ public class ExpenseService {
         return Optional.empty();
     }
 
-    private boolean expenseNameExist(String userId, String expenseName) {
-        return userExpenseRepository.findByUserIdAndExpensesExpenseName(userId, expenseName).isPresent();
+    private boolean expenseIdExist(String userId, Expense expense) {
+        return userExpenseRepository.findByUserIdAndExpensesExpenseId(userId, expense.getExpenseId()).isPresent();
     }
 
     public void initializeExpenses(String userId) {

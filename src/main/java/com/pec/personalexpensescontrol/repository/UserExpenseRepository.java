@@ -16,7 +16,7 @@ public interface UserExpenseRepository extends MongoRepository<UserExpense, Obje
         QuerydslBinderCustomizer<QUser> {
     Optional<UserExpense> findByUserId(String userId);
 
-    Optional<UserExpense> findByUserIdAndExpensesExpenseName(String userId, String expenseName);
+    Optional<UserExpense> findByUserIdAndExpensesExpenseId(String userId, ObjectId expenseId);
 
     default void customize(QuerydslBindings bindings, QUser user) {
         bindings.bind(String.class)
