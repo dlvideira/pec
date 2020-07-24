@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 
@@ -24,8 +25,8 @@ public class BankAccountService {
     private MongoTemplate mongoTemplate;
 
     public void createBankAccount(String userId, BankAccount newBankAccount) throws Exception {
-         if (bankAccountExist(userId, newBankAccount.getBankAccountNumber()))
-           throw new Exception("Conta bancária já existe para este usuário");
+        if (bankAccountExist(userId, newBankAccount.getBankAccountNumber()))
+            throw new Exception("Conta bancária já existe para este usuário");
 
         BankAccount bankAccount = new BankAccount();
         new ModelMapper().map(newBankAccount, bankAccount);
@@ -36,22 +37,27 @@ public class BankAccountService {
         mongoTemplate.updateFirst(Query.query(criteria), update, UserBankAccount.class);
     }
 
-    public void updateBankAccountBalance(String userId, BankAccount bankAccount) {
-        var bankAccountToUpdateBalance = userBankAccountRepository.findByUserId(userId);
-        if (bankAccountToUpdateBalance.isPresent()) {
+    public void updateBankAccountBalance(String userId, BankAccount bankAccount) throws Exception {
+        var bankAccountToUpdateBalance = bankAccountExist(userId, bankAccount);
+        if (bankAccountToUpdateBalance.isEmpty())
+            throw new Exception("Conta bancária não existe");
 
-            List<BankAccount> bankAccounts = bankAccountToUpdateBalance.get().getBankAccounts();
-            bankAccounts.stream()
-                    .filter(item -> item.getBankAccountId().equals(bankAccount.getBankAccountId()))
-                    .findFirst()
-                    .ifPresent(item -> {
-                        var createdDate = item.getBankAccountCreatedDate();
-                        item.setBankAccountCreatedDate(createdDate);
-                        item.setBankAccountLastUpdatedDate(new Date());
-                        item.setAccountBalance(item.getAccountBalance().add(bankAccount.getAccountBalance()));
-                    });
-            userBankAccountRepository.save(bankAccountToUpdateBalance.get());
-        }
+        List<BankAccount> bankAccounts = bankAccountToUpdateBalance.get().getBankAccounts();
+        bankAccounts.stream()
+                .filter(item -> item.getBankAccountId().equals(bankAccount.getBankAccountId()))
+                .findFirst()
+                .ifPresent(item -> {
+                    var createdDate = item.getBankAccountCreatedDate();
+                    item.setBankAccountCreatedDate(createdDate);
+                    item.setBankAccountLastUpdatedDate(new Date());
+                    item.setAccountBalance(item.getAccountBalance().add(bankAccount.getAccountBalance()));
+                });
+        userBankAccountRepository.save(bankAccountToUpdateBalance.get());
+
+    }
+
+    private Optional<UserBankAccount> bankAccountExist(String userId, BankAccount bankAccount) {
+        return userBankAccountRepository.findByUserIdAndBankAccountsBankAccountId(userId, bankAccount.getBankAccountId());
     }
 
     private boolean bankAccountExist(String userId, String bankAccountNumber) {
