@@ -2,6 +2,7 @@ package com.pec.personalexpensescontrol.controller;
 
 import com.pec.personalexpensescontrol.model.Expense;
 import com.pec.personalexpensescontrol.service.ExpenseService;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,7 +31,7 @@ public class ExpenseController {
         }
     }
 
-    @PostMapping("/expenses/{userId}/updateExpense")
+    @PatchMapping("/expenses/{userId}/updateExpense")
     public ResponseEntity updateExpense(@PathVariable("userId") String userId, @RequestBody Expense expense) {
         var response = expenseService.updateExpense(userId, expense);
         if (response.isPresent()) {
@@ -39,16 +40,16 @@ public class ExpenseController {
         return ResponseEntity.badRequest().body("Não consegui atualizar a despesa " + expense.getExpenseName() + ":( \nTente novamente.");
     }
 
-    @DeleteMapping("/expenses/{userId}/deleteExpense/{expenseName}")
-    public ResponseEntity deleteExpense(@PathVariable("userId") String userId, @PathVariable("expenseName") String expenseName) {
-        var response = expenseService.deleteExpense(userId, expenseName);
+    @DeleteMapping("/expenses/{userId}/deleteExpense")
+    public ResponseEntity deleteExpense(@PathVariable("userId") String userId, @RequestParam("expenseId") ObjectId expenseId) {
+        var response = expenseService.deleteExpense(userId, expenseId);
         if (response.isPresent()) {
-            return ResponseEntity.ok().body("Despesa " + expenseName + " atualizada com sucesso!");
+            return ResponseEntity.ok().body("Despesa " + expenseId + " atualizada com sucesso!");
         }
-        return ResponseEntity.ok().body("Poxa, não consegui deletar a despesa" + expenseName + ". :( \nTente novamente.");
+        return ResponseEntity.ok().body("Poxa, não consegui deletar a despesa" + expenseId + ". :( \nTente novamente.");
     }
 
-    @DeleteMapping("/expenses/{userId}/deleteAll")
+    @DeleteMapping("/expenses/{userId}/deleteAllexpenses")
     public ResponseEntity deleteAll(@PathVariable("userId") String userId) {
         var response = expenseService.deleteAllExpenses(userId);
         if (response.isPresent()) {

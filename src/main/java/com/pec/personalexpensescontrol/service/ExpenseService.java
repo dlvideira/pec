@@ -3,6 +3,7 @@ package com.pec.personalexpensescontrol.service;
 import com.pec.personalexpensescontrol.model.Expense;
 import com.pec.personalexpensescontrol.model.UserExpense;
 import com.pec.personalexpensescontrol.repository.UserExpenseRepository;
+import org.bson.types.ObjectId;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -37,8 +38,9 @@ public class ExpenseService {
     }
 
     public void createExpense(String userId, Expense expenseBody) throws Exception {
-        if (expenseIdExist(userId, expenseBody))
-            throw new Exception("Já existe uma despesa com esse nome.");
+        //TODO validar name ao inves de id da expense? nunca vou repetir id
+/*        if (expenseIdExist(userId, expenseBody.getExpenseId()).isPresent())
+            throw new Exception("Já existe uma despesa com esse nome.");*/
 
         Expense expense = new Expense();
         new ModelMapper().map(expenseBody, expense);
@@ -49,13 +51,12 @@ public class ExpenseService {
         mongoTemplate.updateFirst(Query.query(criteria), update, UserExpense.class);
     }
 
-    //TODO tratar despesa que não existe para esse userId e refatorar o get por ExpenseName para ExpenseId
     public Optional<UserExpense> updateExpense(String userId, Expense expenseBody) {
-        var user = userExpenseRepository.findByUserId(userId);
+        var user = expenseIdExist(userId, expenseBody.getExpenseId());
         if (user.isPresent()) {
             List<Expense> userExpenses = user.get().getExpenses();
             userExpenses.stream()
-                    .filter(item -> item.getExpenseName().equals(expenseBody.getExpenseName()))
+                    .filter(item -> item.getExpenseId().equals(expenseBody.getExpenseId()))
                     .findFirst()
                     .ifPresent(item -> {
                         var createdDate = item.getExpenseCreatedDate();
@@ -69,11 +70,11 @@ public class ExpenseService {
         return Optional.empty();
     }
 
-    public Optional<UserExpense> deleteExpense(String userId, String expenseName) {
+    public Optional<UserExpense> deleteExpense(String userId, ObjectId expenseId) {
         var user = userExpenseRepository.findByUserId(userId);
         if (user.isPresent()) {
             List<Expense> userExpenses = user.get().getExpenses();
-            userExpenses.removeIf(item -> item.getExpenseName().equals(expenseName));
+            userExpenses.removeIf(item -> item.getExpenseId().equals(expenseId));
             userExpenseRepository.save(user.get());
             return user;
         }
@@ -90,8 +91,8 @@ public class ExpenseService {
         return Optional.empty();
     }
 
-    private boolean expenseIdExist(String userId, Expense expense) {
-        return userExpenseRepository.findByUserIdAndExpensesExpenseId(userId, expense.getExpenseId()).isPresent();
+    private Optional<UserExpense> expenseIdExist(String userId, ObjectId expenseId) {
+        return userExpenseRepository.findByUserIdAndExpensesExpenseId(userId, expenseId);
     }
 
     public void initializeExpenses(String userId) {
