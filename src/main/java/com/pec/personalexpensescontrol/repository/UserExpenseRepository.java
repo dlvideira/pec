@@ -18,6 +18,8 @@ public interface UserExpenseRepository extends MongoRepository<UserExpense, Obje
 
     Optional<UserExpense> findByUserIdAndExpensesExpenseId(String userId, ObjectId expenseId);
 
+    Optional<UserExpense> findByUserIdAndExpensesExpenseName(String userId, String expenseName);
+
     default void customize(QuerydslBindings bindings, QUser user) {
         bindings.bind(String.class)
                 .first((StringPath path, String value) -> path.containsIgnoreCase(value));

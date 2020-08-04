@@ -38,9 +38,8 @@ public class ExpenseService {
     }
 
     public void createExpense(String userId, Expense expenseBody) throws Exception {
-        //TODO validar name ao inves de id da expense? nunca vou repetir id
-/*        if (expenseIdExist(userId, expenseBody.getExpenseId()).isPresent())
-            throw new Exception("Já existe uma despesa com esse nome.");*/
+        if (expenseNameExist(userId, expenseBody.getExpenseName()).isPresent())
+            throw new Exception("Já existe uma despesa com esse nome.");
 
         Expense expense = new Expense();
         new ModelMapper().map(expenseBody, expense);
@@ -93,6 +92,10 @@ public class ExpenseService {
 
     private Optional<UserExpense> expenseIdExist(String userId, ObjectId expenseId) {
         return userExpenseRepository.findByUserIdAndExpensesExpenseId(userId, expenseId);
+    }
+
+    private Optional<UserExpense> expenseNameExist(String userId, String expenseName) {
+        return userExpenseRepository.findByUserIdAndExpensesExpenseName(userId, expenseName);
     }
 
     public void initializeExpenses(String userId) {
