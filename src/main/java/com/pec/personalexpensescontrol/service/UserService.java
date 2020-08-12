@@ -17,9 +17,7 @@ public class UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
     @Autowired
-    private ExpenseService expenseService;
-    @Autowired
-    private BankAccountService bankAccountService;
+    private InitializerService initializerService;
 
     public void createAccount(User newUserRequest) throws Exception {
         if (emailExist(newUserRequest.getEmail()))
@@ -30,11 +28,8 @@ public class UserService {
                 passwordEncoder.encode(newUserRequest.getPassword()),
                 newUserRequest.getEmail(),
                 newUserRequest.getRole(),
-                true);
+                false);
         var createdUser = userManagementRepository.save(user);
-        expenseService.initializeExpenses(createdUser.getId());
-        bankAccountService.initializeBankAccounts(createdUser.getId());
-
     }
 
     public Optional<User> updateEmail(String userId, String newUserEmail) throws Exception {
@@ -59,13 +54,26 @@ public class UserService {
         }
         return Optional.empty();
     }
-
+    @Deprecated
     public Optional<User> updateUserActiveStatus(String userId) {
         var user = userManagementRepository.findById(userId);
         if (user.isPresent()) {
             user.get().setActive(!user.get().isActive());
             userManagementRepository.save(user.get());
             return user;
+        }
+        return Optional.empty();
+    }
+
+    public Optional<User> activateUser(String userId) {
+        var user = userManagementRepository.findById(userId);
+        if (user.isPresent()) {
+            if (!user.get().isActive()){
+                user.get().setActive(true);
+                userManagementRepository.save(user.get());
+                initializerService.initializeCollections(userId);
+                return user;
+            } return Optional.empty();
         }
         return Optional.empty();
     }

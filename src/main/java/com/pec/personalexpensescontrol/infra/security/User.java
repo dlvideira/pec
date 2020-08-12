@@ -25,7 +25,6 @@ public class User extends AbstractMongoModel {
     private boolean isActive;
 
     public static User create(String username, String password, String email, Role role, boolean isActive) {
-        return new User(username, password, email, role, true);
-        //TODO por enquanto HC active true, depois confirma;'ao por email pra ativar
+        return new User(username, password, email, role, isActive);
     }
 }

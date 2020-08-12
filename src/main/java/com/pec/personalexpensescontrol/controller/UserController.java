@@ -12,7 +12,7 @@ public class UserController {
     private UserService userService;
 
     @PostMapping("/account/createAccount")
-    public ResponseEntity createAccount(@RequestBody User user) {
+    public ResponseEntity<String> createAccount(@RequestBody User user) {
         try {
             userService.createAccount(user);
             return ResponseEntity.accepted().body("Conta criada com sucesso!\nAgora você pode fazer login e começar a usar o PEC :)");
@@ -22,7 +22,7 @@ public class UserController {
     }
 
     @PatchMapping("/account/{userId}/updateUserEmail")
-    public ResponseEntity updateUserEmail(@PathVariable("userId") String userId, @RequestParam("newUserEmail") String newUserEmail) {
+    public ResponseEntity<String> updateUserEmail(@PathVariable("userId") String userId, @RequestParam("newUserEmail") String newUserEmail) {
         try {
             var response = userService.updateEmail(userId, newUserEmail);
             if (response.isPresent()) {
@@ -35,7 +35,7 @@ public class UserController {
     }
 
     @PatchMapping("/account/{userId}/updateUsername")
-    public ResponseEntity updateUserName(@PathVariable("userId") String userId, @RequestParam("newUsername") String newUsername) {
+    public ResponseEntity<String> updateUserName(@PathVariable("userId") String userId, @RequestParam("newUsername") String newUsername) {
         var response = userService.updateUsername(userId, newUsername);
         if (response.isPresent()) {
             return ResponseEntity.ok().body("Nome de usuário atualizado com sucesso!");
@@ -44,11 +44,20 @@ public class UserController {
     }
 
     @PatchMapping("/account/{userId}/updateUserActive")
-    public ResponseEntity updateUserActiveStatus(@PathVariable("userId") String userId) {
+    public ResponseEntity<String> updateUserActiveStatus(@PathVariable("userId") String userId) {
         var response = userService.updateUserActiveStatus(userId);
         if (response.isPresent()) {
             return ResponseEntity.ok().body("Status atualizado com sucesso!");
         }
         return ResponseEntity.ok().body("Não consegui atualizar o status agora,");
+    }
+
+    @PostMapping("/account/{userId}/activate")
+    public ResponseEntity<String> activateUser(@PathVariable("userId") String userId) {
+        var response = userService.activateUser(userId);
+        if (response.isPresent()) {
+            return ResponseEntity.ok().body("Usuário ativado com sucesso! \nVocê pode fazer login agora.");
+        }
+        return ResponseEntity.badRequest().body("Usuário já ativo ou não encontrado");
     }
 }
