@@ -2,6 +2,7 @@ package com.pec.personalexpensescontrol.service;
 
 import com.pec.personalexpensescontrol.infra.security.User;
 import com.pec.personalexpensescontrol.repository.UserManagementRepository;
+import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -54,6 +55,7 @@ public class UserService {
         }
         return Optional.empty();
     }
+
     @Deprecated
     public Optional<User> updateUserActiveStatus(String userId) {
         var user = userManagementRepository.findById(userId);
@@ -65,17 +67,16 @@ public class UserService {
         return Optional.empty();
     }
 
-    public Optional<User> activateUser(String userId) {
+    public void activateUser(String userId) throws Exception {
         var user = userManagementRepository.findById(userId);
         if (user.isPresent()) {
-            if (!user.get().isActive()){
+            if (!user.get().isActive()) {
                 user.get().setActive(true);
-                userManagementRepository.save(user.get());
                 initializerService.initializeCollections(userId);
-                return user;
-            } return Optional.empty();
-        }
-        return Optional.empty();
+                userManagementRepository.save(user.get());
+            } else throw new Exception("Usuário já está ativo.\nSe você esqueceu a sua senha, clique em 'Esqueci minha senha'");
+        } else throw new NotFoundException("Usuário não encontrado.");
+
     }
 
     public boolean emailExist(String email) {

@@ -15,7 +15,7 @@ public class UserController {
     public ResponseEntity<String> createAccount(@RequestBody User user) {
         try {
             userService.createAccount(user);
-            return ResponseEntity.accepted().body("Conta criada com sucesso!\nAgora você pode fazer login e começar a usar o PEC :)");
+            return ResponseEntity.accepted().body("Conta criada com sucesso!\nVocê receberá um e-mail com um link para ativar a sua conta.");
         } catch (Exception e) {
             return ResponseEntity.status(409).body(e.getMessage());
         }
@@ -54,10 +54,11 @@ public class UserController {
 
     @PostMapping("/account/{userId}/activate")
     public ResponseEntity<String> activateUser(@PathVariable("userId") String userId) {
-        var response = userService.activateUser(userId);
-        if (response.isPresent()) {
-            return ResponseEntity.ok().body("Usuário ativado com sucesso! \nVocê pode fazer login agora.");
+        try {
+            userService.activateUser(userId);
+            return ResponseEntity.accepted().body("Usuário ativado com sucesso! \nAgora você pode fazer o login e começar a usar o PEC.");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
-        return ResponseEntity.badRequest().body("Usuário já ativo ou não encontrado");
     }
 }

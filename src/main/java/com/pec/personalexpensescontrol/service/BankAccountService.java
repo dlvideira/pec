@@ -28,7 +28,7 @@ public class BankAccountService {
 
     public List<BankAccount> getAllBankAccounts(String userId) {
         var userBankAccount = userBankAccountRepository.findByUserId(userId);
-        if (userBankAccount.isPresent()){
+        if (userBankAccount.isPresent()) {
             List<BankAccount> bankAccounts = userBankAccount.get().getBankAccounts();
             if (bankAccounts != null)
                 return bankAccounts;
