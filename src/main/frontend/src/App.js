@@ -1,14 +1,19 @@
-import React from 'react';
-import UserExpenses from './components/UserExpenses'
-import './App.css';
+import React, { Component } from 'react'
+import TodoApp from './components/todo/TodoApp'
+import './App.css'
+import './bootstrap.css'
 
-function App() {
-  return (
-      //essa chamada de "metodo" passando parametro eu capturo do outro lado (chamado  Child) como props (props.userId)
-    <div className="App">
-        <UserExpenses userId = "5f289d05436f590e8c53d783"/>
-    </div>
-  );
+class App extends Component {
+    render() {
+        return (
+            //preciso colocar o integer dentro do {} pra transformar numa JSX expression e poder passar, nao nao compila
+            // defino na hora esse by=, nao tenho ele na declaracao do metodo, mas mesmo assim consigo passar ele como PROPS
+            <div className="App">
+                {/*<Counter />*/}
+                <TodoApp />
+            </div>
+        )
+    }
 }
 
-export default App;
+export default App
