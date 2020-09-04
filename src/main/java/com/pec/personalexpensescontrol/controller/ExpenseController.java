@@ -45,9 +45,9 @@ public class ExpenseController {
     public ResponseEntity deleteExpense(@PathVariable("userId") String userId, @RequestParam("expenseId") ObjectId expenseId) {
         var response = expenseService.deleteExpense(userId, expenseId);
         if (response.isPresent()) {
-            return ResponseEntity.ok().body("Despesa " + expenseId + " atualizada com sucesso!");
+            return ResponseEntity.ok().body("Despesa deletada com sucesso!");
         }
-        return ResponseEntity.ok().body("Poxa, não consegui deletar a despesa" + expenseId + ". :( \nTente novamente.");
+        return ResponseEntity.ok().body("Poxa, não consegui deletar a despesa.\nTente novamente.");
     }
 
     @DeleteMapping("/expenses/{userId}/deleteAllexpenses")
