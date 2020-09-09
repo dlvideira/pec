@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @CrossOrigin("*")
 @RestController
 public class ExpenseController {
@@ -14,12 +16,13 @@ public class ExpenseController {
     private ExpenseService expenseService;
 
     @GetMapping("/expenses/{userId}")
-    public ResponseEntity getExpenses(@PathVariable("userId") String userId) {
-        var response = expenseService.getAllExpenses(userId);
-        if (!response.isEmpty()) {
-            return ResponseEntity.ok().body(response);
-        }
-        return ResponseEntity.badRequest().body("Não encontrei nenhum registro :(");
+    public List<Expense> getExpenses(@PathVariable("userId") String userId) {
+//        var response = expenseService.getAllExpenses(userId);
+//        if (!response.isEmpty()) {
+//            return ResponseEntity.ok().body(response);
+//        }
+//        return ResponseEntity.badRequest().body("Não encontrei nenhum registro :(");
+        return expenseService.getAllExpenses(userId);
     }
 
     @PostMapping("/expenses/{userId}/createExpense")

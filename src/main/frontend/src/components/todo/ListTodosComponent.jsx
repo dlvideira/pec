@@ -1,5 +1,7 @@
 import React, {Component} from "react";
 import ExpensesService from "../../api/todo/ExpensesService.js";
+import {BSON,Long, ObjectID,Binary,Code,DBRef,Symbol,Double,Timestamp,MaxKey,MinKey} from 'bson'
+
 
 class ListTodosComponent extends Component {
     constructor(props){
@@ -52,14 +54,14 @@ class ListTodosComponent extends Component {
                         </thead>
                         <tbody>
                         {
-                            this.state.expenses.map(
+                            this.state.expenses.    map(
                                 expense =>
                                     // ele nao le o expenseId direito, da erro / se uso toString ele printa object Object, a key tem q ser o expense id
                                     <tr key={expense.expenseName}>
                                         <td>{expense.expenseName}</td>
                                         <td>{expense.amount}</td>
                                         <td>{expense.category}</td>
-                                        <td><button className="btn btn-warning" onClick={() => console.log(expense.expenseId)}>testarID</button></td>
+                                        <td><button className="btn btn-warning" onClick={() => getHexa(expense.expenseId)}>testarID</button></td>
                                         <td><button className="btn btn-warning" onClick={() => this.deleteExpense(expense.expenseId)}>BKP</button></td>
                                     </tr>
                             )
@@ -69,6 +71,19 @@ class ListTodosComponent extends Component {
                 </div>
             </div>)
     }
+}
+
+function getHexa(object){
+    const bson = require('bson')
+    let tooo = bson.ObjectId
+    // console.log("1: " + bson)
+    // const teste = new ObjectID()
+    // console.log("2: " + teste)
+    //
+    // const shhhh = bson.toHexString(object)
+    // console.log("4: " + shhhh )
+    console.log(tooo)
+    return null
 }
 
 export default ListTodosComponent
