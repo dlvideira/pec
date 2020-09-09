@@ -1,7 +1,5 @@
 import React, {Component} from "react";
 import ExpensesService from "../../api/todo/ExpensesService.js";
-import {BSON,Long, ObjectID,Binary,Code,DBRef,Symbol,Double,Timestamp,MaxKey,MinKey} from 'bson'
-
 
 class ListTodosComponent extends Component {
     constructor(props){
@@ -22,7 +20,6 @@ class ListTodosComponent extends Component {
         ExpensesService.getAllExpenses("5f3ec5079bb5ae3114c544e5")
             .then(
                 response => {
-                    //console.log(response)
                     this.setState({expenses : response.data})
                 }
             )
@@ -32,7 +29,7 @@ class ListTodosComponent extends Component {
         ExpensesService.deleteExpense(expenseId)
             .then(
                 response => {
-                    this.setState({message: response.data.body.message})
+                    this.setState({actionMessage: response.data})
                     this.refreshExpenses()
                 }
             )
@@ -42,6 +39,7 @@ class ListTodosComponent extends Component {
         return(
             <div>
                 <h1>List Expenses</h1>
+                {this.state.actionMessage && <div className="alert alert-success">{this.state.actionMessage}</div>}
                 <div className="container">
                     <table className="table">
                         <thead>
@@ -61,8 +59,7 @@ class ListTodosComponent extends Component {
                                         <td>{expense.expenseName}</td>
                                         <td>{expense.amount}</td>
                                         <td>{expense.category}</td>
-                                        <td><button className="btn btn-warning" onClick={() => getHexa(expense.expenseId)}>testarID</button></td>
-                                        <td><button className="btn btn-warning" onClick={() => this.deleteExpense(expense.expenseId)}>BKP</button></td>
+                                        <td><button className="btn btn-danger btn-circle" onClick={() => this.deleteExpense(expense.expenseId)}>X</button></td>
                                     </tr>
                             )
                         }
@@ -71,19 +68,6 @@ class ListTodosComponent extends Component {
                 </div>
             </div>)
     }
-}
-
-function getHexa(object){
-    const bson = require('bson')
-    let tooo = bson.ObjectId
-    // console.log("1: " + bson)
-    // const teste = new ObjectID()
-    // console.log("2: " + teste)
-    //
-    // const shhhh = bson.toHexString(object)
-    // console.log("4: " + shhhh )
-    console.log(tooo)
-    return null
 }
 
 export default ListTodosComponent
