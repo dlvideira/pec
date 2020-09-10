@@ -3,8 +3,8 @@ import AuthenticationService from "../../components/todo/AuthenticationService";
 
 class ExpensesService {
     userId = AuthenticationService.getLoggedUserId()
-    getAllExpenses(userId) {
-        return axios.get(`http://localhost:8080/expenses/${userId}`);
+    getAllExpenses() {
+        return axios.get(`http://localhost:8080/expenses/${this.userId}`);
     }
 
     deleteExpense(expenseId) {
