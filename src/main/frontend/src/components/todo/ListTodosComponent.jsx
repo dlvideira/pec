@@ -1,11 +1,12 @@
 import React, {Component} from "react";
 import ExpensesService from "../../api/todo/ExpensesService.js";
+import moment from "moment";
 
 class ListTodosComponent extends Component {
-    constructor(props){
+    constructor(props) {
         super(props)
         this.state = {
-            actionMessage : null,
+            actionMessage: null,
             expenses: []
         }
         this.refreshExpenses = this.refreshExpenses.bind(this)
@@ -17,10 +18,10 @@ class ListTodosComponent extends Component {
     }
 
     refreshExpenses() {
-        ExpensesService.getAllExpenses("5f3ec5079bb5ae3114c544e5")
+        ExpensesService.getAllExpenses()
             .then(
                 response => {
-                    this.setState({expenses : response.data})
+                    this.setState({expenses: response.data})
                 }
             )
     }
@@ -35,8 +36,19 @@ class ListTodosComponent extends Component {
             )
     }
 
-    render(){
-        return(
+    updateExpense(expenseId) {
+        this.props.history.push(`/todo/${expenseId}`)
+        // ExpensesService.updateExpense(expenseId)
+        //     .then(
+        //         response => {
+        //             this.setState({actionMessage: response.data})
+        //             this.refreshExpenses()
+        //         }
+        //     )
+    }
+
+    render() {
+        return (
             <div>
                 <h1>List Expenses</h1>
                 {this.state.actionMessage && <div className="alert alert-success">{this.state.actionMessage}</div>}
@@ -44,22 +56,40 @@ class ListTodosComponent extends Component {
                     <table className="table">
                         <thead>
                         <tr>
-                            <th>Descrição</th>
-                            <th>Total</th>
+                            <th>Nome / Descrição</th>
+                            <th>Valor</th>
                             <th>Categoria</th>
+                            <th>Total de Parcelas</th>
+                            <th>Parcela Atual</th>
+                            <th>Frequência</th>
+                            <th>Data de Criação</th>
+                            <th>Última Modificação</th>
                             <th></th>
                         </tr>
                         </thead>
                         <tbody>
                         {
-                            this.state.expenses.    map(
+                            this.state.expenses.map(
                                 expense =>
-                                    // ele nao le o expenseId direito, da erro / se uso toString ele printa object Object, a key tem q ser o expense id
-                                    <tr key={expense.expenseName}>
+                                    <tr key={expense.expenseId}>
                                         <td>{expense.expenseName}</td>
                                         <td>{expense.amount}</td>
                                         <td>{expense.category}</td>
-                                        <td><button className="btn btn-danger btn-circle" onClick={() => this.deleteExpense(expense.expenseId)}>X</button></td>
+                                        <td>{expense.totalParcels}</td>
+                                        <td>{expense.currentParcel}</td>
+                                        <td>{expense.frequency}</td>
+                                        <td>{moment(expense.expenseCreatedDate).format("DD-MM-YYYY hh:mm")}</td>
+                                        <td>{moment(expense.expenseLastUpdatedDate).format("DD-MM-YYYY hh:mm")}</td>
+                                        <td>
+                                            <button className="btn btn-warning"
+                                                    onClick={() => this.updateExpense(expense.expenseId)}>Edit
+                                            </button>
+                                        </td>
+                                        <td>
+                                            <button className="btn btn-danger btn-circle"
+                                                    onClick={() => this.deleteExpense(expense.expenseId)}>X
+                                            </button>
+                                        </td>
                                     </tr>
                             )
                         }

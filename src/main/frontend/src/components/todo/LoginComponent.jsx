@@ -27,7 +27,7 @@ class LoginComponent extends Component {
         if(this.state.username==='5f3ec5079bb5ae3114c544e5' && this.state.password ==='teste') {
             //aqui estou chamando o metodo de criar sess'ao no browser pelo javascript
             //da pra acessar inspecionar elemento / application / session Storage
-            AuthenticationService.registerSucessfulLogin(this.state.username, this.state.password)
+            AuthenticationService.registerSuccessfulLogin(this.state.username, this.state.password)
             //esse e o redirect wth
             this.props.history.push(`/welcome/${this.state.username}`)
             //this.setState({showSuccessMessage: true})

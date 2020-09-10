@@ -1,5 +1,5 @@
 class AuthenticationService {
-    registerSucessfulLogin(userId, password){
+    registerSuccessfulLogin(userId, password){
         sessionStorage.setItem('userId', userId)
     }
 

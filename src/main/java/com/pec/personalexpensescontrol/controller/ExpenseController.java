@@ -16,17 +16,16 @@ public class ExpenseController {
     private ExpenseService expenseService;
 
     @GetMapping("/expenses/{userId}")
-    public List<Expense> getExpenses(@PathVariable("userId") String userId) {
-//        var response = expenseService.getAllExpenses(userId);
-//        if (!response.isEmpty()) {
-//            return ResponseEntity.ok().body(response);
-//        }
-//        return ResponseEntity.badRequest().body("Não encontrei nenhum registro :(");
-        return expenseService.getAllExpenses(userId);
+    public ResponseEntity<?> getExpenses(@PathVariable("userId") String userId) {
+        var response = expenseService.getAllExpenses(userId);
+        if (!response.isEmpty()) {
+            return ResponseEntity.ok().body(response);
+        }
+        return ResponseEntity.badRequest().body("Não encontrei nenhum registro :(");
     }
 
     @PostMapping("/expenses/{userId}/createExpense")
-    public ResponseEntity createExpense(@PathVariable("userId") String userId, @RequestBody Expense expense) {
+    public ResponseEntity<String> createExpense(@PathVariable("userId") String userId, @RequestBody Expense expense) {
         try {
             expenseService.createExpense(userId, expense);
             return ResponseEntity.accepted().body("Despesa " + expense.getExpenseName() + " criada com sucesso!");
@@ -36,7 +35,7 @@ public class ExpenseController {
     }
 
     @PatchMapping("/expenses/{userId}/updateExpense")
-    public ResponseEntity updateExpense(@PathVariable("userId") String userId, @RequestBody Expense expense) {
+    public ResponseEntity<String> updateExpense(@PathVariable("userId") String userId, @RequestBody Expense expense) {
         var response = expenseService.updateExpense(userId, expense);
         if (response.isPresent()) {
             return ResponseEntity.ok().body("Despesa " + expense.getExpenseName() + " atualizada com sucesso!");
@@ -45,7 +44,7 @@ public class ExpenseController {
     }
 
     @DeleteMapping("/expenses/{userId}/deleteExpense")
-    public ResponseEntity deleteExpense(@PathVariable("userId") String userId, @RequestParam("expenseId") ObjectId expenseId) {
+    public ResponseEntity<String> deleteExpense(@PathVariable("userId") String userId, @RequestParam("expenseId") ObjectId expenseId) {
         var response = expenseService.deleteExpense(userId, expenseId);
         if (response.isPresent()) {
             return ResponseEntity.ok().body("Despesa deletada com sucesso!");
@@ -54,7 +53,7 @@ public class ExpenseController {
     }
 
     @DeleteMapping("/expenses/{userId}/deleteAllexpenses")
-    public ResponseEntity deleteAll(@PathVariable("userId") String userId) {
+    public ResponseEntity<String> deleteAll(@PathVariable("userId") String userId) {
         var response = expenseService.deleteAllExpenses(userId);
         if (response.isPresent()) {
             return ResponseEntity.ok().body("Todas as despesas foram deletadas com sucesso!");
