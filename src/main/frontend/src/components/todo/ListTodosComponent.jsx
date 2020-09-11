@@ -11,6 +11,7 @@ class ListTodosComponent extends Component {
         }
         this.refreshExpenses = this.refreshExpenses.bind(this)
         this.deleteExpense = this.deleteExpense.bind(this)
+        this.addExpense = this.addExpense.bind(this)
     }
 
     componentDidMount() {
@@ -38,13 +39,10 @@ class ListTodosComponent extends Component {
 
     updateExpense(expenseId) {
         this.props.history.push(`/todo/${expenseId}`)
-        // ExpensesService.updateExpense(expenseId)
-        //     .then(
-        //         response => {
-        //             this.setState({actionMessage: response.data})
-        //             this.refreshExpenses()
-        //         }
-        //     )
+    }
+
+    addExpense(){
+        this.props.history.push(`/todo/0`)
     }
 
     render() {
@@ -61,7 +59,7 @@ class ListTodosComponent extends Component {
                             <th>Categoria</th>
                             <th>Total de Parcelas</th>
                             <th>Parcela Atual</th>
-                            <th>Frequência</th>
+                            <th>Frequência (dias)</th>
                             <th>Data de Criação</th>
                             <th>Última Modificação</th>
                             <th></th>
@@ -95,6 +93,9 @@ class ListTodosComponent extends Component {
                         }
                         </tbody>
                     </table>
+                    <div className="row">
+                        <button className="btn btn-success btn-circle-large" onClick={this.addExpense}>+</button>
+                    </div>
                 </div>
             </div>)
     }
