@@ -24,6 +24,12 @@ public class ExpenseController {
         return ResponseEntity.badRequest().body("Não encontrei nenhum registro :(");
     }
 
+    @GetMapping("/expenses/{userId}/getExpense")
+    public Expense getExpense(@PathVariable String userId, @RequestParam ObjectId expenseId){
+        var response = expenseService.getExpense(userId, expenseId);
+        return response.orElse(null);
+    }
+
     @PostMapping("/expenses/{userId}/createExpense")
     public ResponseEntity<String> createExpense(@PathVariable("userId") String userId, @RequestBody Expense expense) {
         try {
