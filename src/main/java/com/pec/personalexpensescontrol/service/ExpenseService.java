@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collector;
 
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 
@@ -100,5 +101,14 @@ public class ExpenseService {
 
     public void initializeExpenses(String userId) {
         userExpenseRepository.save(new UserExpense(userId, null));
+    }
+
+    public Optional<Expense> getExpense(String userId, ObjectId expenseId) {
+        var user = userExpenseRepository.findByUserId(userId);
+        if (user.isPresent()) {
+            List<Expense> userExpenses = user.get().getExpenses();
+            return userExpenses.stream().filter(item -> item.getExpenseId().equals(expenseId)).findFirst();
+        }
+        return Optional.empty();
     }
 }
