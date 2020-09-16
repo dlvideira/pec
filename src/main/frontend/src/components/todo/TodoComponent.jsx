@@ -8,7 +8,7 @@ class TodoComponent extends Component {
         super(props)
 
         this.state = {
-            expenseId: this.props.match.params.id,
+            expenseId: this.props.match.params.expenseId,
             expenseName: "",
             amount: 0,
             category: "",
@@ -19,9 +19,8 @@ class TodoComponent extends Component {
         this.onSubmit = this.onSubmit.bind(this)
     }
 
-    onSubmit(values){
+    onSubmit(values) {
         let expenseToUpdate = {
-            expenseId: this.state.expenseId,
             expenseName: values.expenseName,
             amount: values.amount,
             category: values.category,
@@ -29,26 +28,24 @@ class TodoComponent extends Component {
             currentParcel: values.currentParcel,
             frequency: values.frequency
         }
-        if (this.state.id === 0){
+        if (this.state.expenseId === "0") {
             ExpensesService.createExpense(expenseToUpdate)
                 .then(() => this.props.history.push('/todos'))
-        }else {
+        } else {
+            expenseToUpdate.expenseId = this.state.expenseId
             ExpensesService.updateExpense(expenseToUpdate)
                 .then(() => this.props.history.push('/todos'))
         }
     }
 
     componentDidMount() {
-        if(this.state.expenseId=== 0) {
+        if (this.state.expenseId === "0") {
             return
         }
         this.refreshExpense();
     }
 
     refreshExpense() {
-        if(this.state.expenseId=== 0) {
-            return
-        }
         ExpensesService.getExpense(this.state.expenseId)
             .then(
                 response => {
@@ -63,6 +60,7 @@ class TodoComponent extends Component {
                     })
                 }
             )
+
     }
 
     render() {
@@ -70,44 +68,56 @@ class TodoComponent extends Component {
         return (
             <div>
                 <h1>Todo</h1>
-                    <div className="container">
-                        <Formik
-                            initialValues={{expenseId, expenseName, amount, category, totalParcels, currentParcel, frequency}}
-                            enableReinitialize={true}
-                            onSubmit={this.onSubmit}>
-                            {
-                                (props) => (
-                                    <Form>
-                                        <fieldset className="form-group">
-                                            <label>Nome / Descrição</label>
-                                            <Field className="form-control" type="text" name="expenseName"/>
-                                        </fieldset>
-                                        <fieldset className="form-group">
-                                            <label>Valor</label>
-                                            <Field className="form-control" type="number" name="amount"/>
-                                        </fieldset>
-                                        <fieldset className="form-group">
-                                            <label>Categoria</label>
-                                            <Field className="form-control" type="text" name="category"/>
-                                        </fieldset>
-                                        <fieldset className="form-group">
-                                            <label>Total de Parcelas</label>
-                                            <Field className="form-control" type="number" name="totalParcels"/>
-                                        </fieldset>
-                                        <fieldset className="form-group">
-                                            <label>Parcela Atual</label>
-                                            <Field className="form-control" type="number" name="currentParcel"/>
-                                        </fieldset>
-                                        <fieldset className="form-group">
-                                            <label>Frequência (dias)</label>
-                                            <Field className="form-control" type="text" name="frequency"/>
-                                        </fieldset>
+                <div className="container">
+                    <Formik
+                        initialValues={{
+                            expenseId,
+                            expenseName,
+                            amount,
+                            category,
+                            totalParcels,
+                            currentParcel,
+                            frequency
+                        }}
+                        enableReinitialize={true}
+                        onSubmit={this.onSubmit}>
+                        {
+                            (props) => (
+                                <Form>
+                                    <fieldset className="form-group">
+                                        <label>Nome / Descrição</label>
+                                        <Field className="form-control" type="text" name="expenseName"/>
+                                    </fieldset>
+                                    <fieldset className="form-group">
+                                        <label>Valor</label>
+                                        <Field className="form-control" type="number" name="amount"/>
+                                    </fieldset>
+                                    <fieldset className="form-group">
+                                        <label>Categoria</label>
+                                        <Field className="form-control" type="text" name="category"/>
+                                    </fieldset>
+                                    <fieldset className="form-group">
+                                        <label>Total de Parcelas</label>
+                                        <Field className="form-control" type="number" name="totalParcels"/>
+                                    </fieldset>
+                                    <fieldset className="form-group">
+                                        <label>Parcela Atual</label>
+                                        <Field className="form-control" type="number" name="currentParcel"/>
+                                    </fieldset>
+                                    <fieldset className="form-group">
+                                        <label>Frequência (dias)</label>
+                                        <Field className="form-control" type="text" name="frequency"/>
+                                    </fieldset>
+                                    {this.state.expenseId === "0" ?
+                                        <button className="btn btn-success" type="submit">Criar</button>
+                                        :
                                         <button className="btn btn-success" type="submit">Salvar</button>
-                                    </Form>
-                                )
-                            }
-                        </Formik>
-                    </div>
+                                    }
+                                </Form>
+                            )
+                        }
+                    </Formik>
+                </div>
             </div>
         )
     }

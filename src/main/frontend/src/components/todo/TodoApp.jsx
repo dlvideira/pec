@@ -22,7 +22,7 @@ class TodoApp extends Component{
                         <Route path="/" exact component={LoginComponent}/>
                         <Route path="/login" component={LoginComponent}/>
                         <AuthenticatedRoute path="/welcome/:name" component={WelcomeComponent}/>
-                        <AuthenticatedRoute path="/todo/:id" component={TodoComponent}/>
+                        <AuthenticatedRoute path="/todo/:expenseId" component={TodoComponent}/>
                         <AuthenticatedRoute path="/todos" component={ListTodosComponent}/>
                         <AuthenticatedRoute path="/logout" component={LogoutComponent}/>
                         {/*esse ultimo só é chamado caso nao encontre nenhum Route antes (é como um fallback), personalizar a página pra deixar friendly*/}

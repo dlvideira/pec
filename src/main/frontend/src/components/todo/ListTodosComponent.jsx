@@ -11,7 +11,7 @@ class ListTodosComponent extends Component {
         }
         this.refreshExpenses = this.refreshExpenses.bind(this)
         this.deleteExpense = this.deleteExpense.bind(this)
-        this.addExpense = this.addExpense.bind(this)
+        this.createExpense = this.createExpense.bind(this)
     }
 
     componentDidMount() {
@@ -41,7 +41,7 @@ class ListTodosComponent extends Component {
         this.props.history.push(`/todo/${expenseId}`)
     }
 
-    addExpense(){
+    createExpense() {
         this.props.history.push(`/todo/0`)
     }
 
@@ -94,7 +94,7 @@ class ListTodosComponent extends Component {
                         </tbody>
                     </table>
                     <div className="row">
-                        <button className="btn btn-success btn-circle-large" onClick={this.addExpense}>+</button>
+                        <button className="btn btn-success btn-circle-large" onClick={this.createExpense}>+</button>
                     </div>
                 </div>
             </div>)
