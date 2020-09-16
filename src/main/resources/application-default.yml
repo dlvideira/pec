@@ -1,7 +1,7 @@
 spring:
   profiles: default
   data.mongodb:
-    uri: mongodb+srv://react:yTpC0pzPCWnxaDbo@cluster0.ro2ul.gcp.mongodb.net/pec?retryWrites=true&w=majority;
+    uri: mongodb+srv://react:${MONGO_PEC_PASS}@cluster0.ro2ul.gcp.mongodb.net/pec?retryWrites=true&w=majority;
 
 adminUser:
   email: admin@pec.com.br
