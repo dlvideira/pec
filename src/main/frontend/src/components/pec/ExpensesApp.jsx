@@ -2,15 +2,15 @@ import React, { Component } from 'react'
 import {BrowserRouter as Router,  Route, Switch} from 'react-router-dom'
 import AuthenticatedRoute from './AuthenticatedRoute'
 import LoginComponent from "./LoginComponent"
-import ListTodosComponent from "./ListTodosComponent"
+import ListExpensesComponent from "./ListExpensesComponent"
 import HeaderComponent from "./HeaderComponent"
 import ErrorComponent from "./ErrorComponent"
 import FooterComponent from "./FooterComponent"
 import LogoutComponent from "./LogoutComponent"
 import WelcomeComponent from "./WelcomeComponent"
-import TodoComponent from "./TodoComponent"
+import ExpenseComponent from "./ExpenseComponent"
 
-class TodoApp extends Component{
+class ExpensesApp extends Component{
     render() {
         //esse Rouuter funciona com um controller, cara requisicao nessa url encaminha para o component especifico
         return (
@@ -22,8 +22,8 @@ class TodoApp extends Component{
                         <Route path="/" exact component={LoginComponent}/>
                         <Route path="/login" component={LoginComponent}/>
                         <AuthenticatedRoute path="/welcome/:name" component={WelcomeComponent}/>
-                        <AuthenticatedRoute path="/todo/:expenseId" component={TodoComponent}/>
-                        <AuthenticatedRoute path="/todos" component={ListTodosComponent}/>
+                        <AuthenticatedRoute path="/todo/:expenseId" component={ExpenseComponent}/>
+                        <AuthenticatedRoute path="/todos" component={ListExpensesComponent}/>
                         <AuthenticatedRoute path="/logout" component={LogoutComponent}/>
                         {/*esse ultimo só é chamado caso nao encontre nenhum Route antes (é como um fallback), personalizar a página pra deixar friendly*/}
                         <Route component={ErrorComponent}/>
@@ -37,4 +37,4 @@ class TodoApp extends Component{
     }
 }
 
-export default TodoApp
+export default ExpensesApp

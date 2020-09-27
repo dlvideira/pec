@@ -1,5 +1,5 @@
 import axios from 'axios'
-import AuthenticationService from "../../components/todo/AuthenticationService";
+import AuthenticationService from "../../components/pec/AuthenticationService";
 
 class ExpensesService {
     userId = AuthenticationService.getLoggedUserId()

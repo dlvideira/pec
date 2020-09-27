@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
-import TodoApp from './components/todo/TodoApp'
+import ExpensesApp from './components/pec/ExpensesApp'
 import './App.css'
 import './bootstrap.css'
-import './components/todo/Button.css'
+import './components/pec/Button.css'
 
 class App extends Component {
     render() {
@@ -11,7 +11,7 @@ class App extends Component {
             // defino na hora esse by=, nao tenho ele na declaracao do metodo, mas mesmo assim consigo passar ele como PROPS
             <div className="App">
                 {/*<Counter />*/}
-                <TodoApp />
+                <ExpensesApp />
             </div>
         )
     }

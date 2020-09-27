@@ -2,7 +2,7 @@ import React, {Component} from "react";
 import ExpensesService from "../../api/todo/ExpensesService.js";
 import moment from "moment";
 
-class ListTodosComponent extends Component {
+class ListExpensesComponent extends Component {
     constructor(props) {
         super(props)
         this.state = {
@@ -101,4 +101,4 @@ class ListTodosComponent extends Component {
     }
 }
 
-export default ListTodosComponent
+export default ListExpensesComponent
