@@ -3,7 +3,7 @@ import {Field, Form, Formik} from "formik";
 import ExpensesService from "../../api/todo/ExpensesService.js";
 
 
-class TodoComponent extends Component {
+class ExpenseComponent extends Component {
     constructor(props) {
         super(props)
 
@@ -123,4 +123,4 @@ class TodoComponent extends Component {
     }
 }
 
-export default TodoComponent
+export default ExpenseComponent
