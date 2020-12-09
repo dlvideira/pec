@@ -3,11 +3,11 @@ import AuthenticationService from "./AuthenticationService.js";
 
 class LoginComponent extends Component {
 
-    constructor(props){
+    constructor(props) {
         super(props)
 
         this.state = {
-            username: '5f3ec5079bb5ae3114c544e5',
+            username: 'teste@gmail.com',
             password: '',
             hasLoginFailed: false,
             showSuccessMessage: false
@@ -23,18 +23,18 @@ class LoginComponent extends Component {
         })
     }
 
-    loginClicked(){
-        if(this.state.username==='5f3ec5079bb5ae3114c544e5' && this.state.password ==='teste') {
-            //aqui estou chamando o metodo de criar sess'ao no browser pelo javascript
-            //da pra acessar inspecionar elemento / application / session Storage
-            AuthenticationService.registerSuccessfulLogin(this.state.username, this.state.password)
-            //esse e o redirect wth
-            this.props.history.push(`/welcome/${this.state.username}`)
-            //this.setState({showSuccessMessage: true})
-        }
-        else
+    loginClicked() {
+        AuthenticationService
+            .executeBasicAuthenticationService(this.state.username, this.state.password)
+            .then((response) => {
+                AuthenticationService.registerSuccessfulLogin(this.state.username, this.state.password, response.data.toString())
+                this.props.history.push(`/welcome/${this.state.username}`)
+            }).catch(() => {
+            this.setState({showSuccessMessage: false})
             this.setState({hasLoginFailed: true})
+        })
     }
+
     render() {
         return (
             <div>
@@ -48,8 +48,10 @@ class LoginComponent extends Component {
 
                     {/* <ShowSuccessMessage loginOk={this.state.showSuccessMessage} /> */}
                     {this.state.showSuccessMessage && <div>Login Sucessful</div>}
-                    Username: <input type="text" name="username" value={this.state.username} onChange={this.handleChange}/>
-                    Password: <input type="password" name="password"  value={this.state.password} onChange={this.handleChange}/>
+                    Username: <input type="text" name="username" value={this.state.username}
+                                     onChange={this.handleChange}/>
+                    Password: <input type="password" name="password" value={this.state.password}
+                                     onChange={this.handleChange}/>
                     <button className="btn btn-success" onClick={this.loginClicked}>Login</button>
                 </div>
             </div>

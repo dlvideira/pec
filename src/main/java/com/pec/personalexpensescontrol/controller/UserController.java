@@ -6,10 +6,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@CrossOrigin("*")
 @RestController
 public class UserController {
     @Autowired
     private UserService userService;
+
+    @GetMapping(path = "/basicauth/{email}")
+    public ResponseEntity<String> basicAuthbean(@PathVariable("email") String email) {
+        try {
+            var response = userService.getUserIdByEmail(email);
+            return response.map(user -> ResponseEntity.ok().body(user.getId())).orElseGet(() -> ResponseEntity.notFound().build());
+        } catch (Exception e) {
+            return ResponseEntity.status(409).body(e.getMessage());
+        }
+    }
 
     @PostMapping("/account/createAccount")
     public ResponseEntity<String> createAccount(@RequestBody User user) {

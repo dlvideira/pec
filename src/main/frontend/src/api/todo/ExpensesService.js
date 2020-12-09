@@ -3,6 +3,7 @@ import AuthenticationService from "../../components/pec/AuthenticationService";
 
 class ExpensesService {
     userId = AuthenticationService.getLoggedUserId()
+
     getAllExpenses() {
         return axios.get(`http://localhost:8080/expenses/${this.userId}`);
     }
@@ -23,4 +24,5 @@ class ExpensesService {
         return axios.post(`http://localhost:8080/expenses/${this.userId}/createExpense`, expense)
     }
 }
+
 export default new ExpensesService()

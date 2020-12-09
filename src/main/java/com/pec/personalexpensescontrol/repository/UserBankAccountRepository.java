@@ -11,5 +11,4 @@ public interface UserBankAccountRepository extends MongoRepository<UserBankAccou
     Optional<UserBankAccount> findByUserIdAndBankAccountsBankAccountId(String userId, ObjectId bankAccountId);
 
     Optional<UserBankAccount> findByUserId(String userId);
-
 }
