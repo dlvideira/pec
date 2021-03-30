@@ -4,9 +4,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.bson.types.ObjectId;
-
 
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
@@ -14,9 +12,8 @@ import java.util.Date;
 
 @Data
 @AllArgsConstructor
-@NoArgsConstructor
 public class Expense {
-    @JsonSerialize(using= ToStringSerializer.class)
+    @JsonSerialize(using = ToStringSerializer.class)
     private ObjectId expenseId = new ObjectId();
     private Date expenseCreatedDate;
     private Date expenseLastUpdatedDate;
@@ -29,4 +26,9 @@ public class Expense {
     private int frequency;
     @NotNull(message = "category must not be null")
     private Category category;
+
+    public Expense() {
+        expenseCreatedDate = new Date();
+        expenseLastUpdatedDate = new Date();
+    }
 }

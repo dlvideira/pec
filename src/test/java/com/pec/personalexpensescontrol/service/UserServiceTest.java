@@ -2,7 +2,7 @@ package com.pec.personalexpensescontrol.service;
 
 import com.pec.personalexpensescontrol.infra.security.User;
 import com.pec.personalexpensescontrol.repository.UserManagementRepository;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.exceptions.base.MockitoException;
@@ -10,8 +10,9 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Optional;
 
-import static com.pec.personalexpensescontrol.infra.security.Role.USER;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -95,7 +96,7 @@ public class UserServiceTest {
         assertNotSame(true, findResponseUserMock.get().isActive());
     }
 
-    @Test(expected = MockitoException.class)
+    @Test
     public void should_throw_emailConflictException_emailExist() {
         when(userService.emailExist(any(String.class))).thenReturn(true);
         if (userService.emailExist(""))

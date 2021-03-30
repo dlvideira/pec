@@ -3,12 +3,13 @@ package com.pec.personalexpensescontrol.service;
 import com.pec.personalexpensescontrol.model.BankAccount;
 import com.pec.personalexpensescontrol.model.UserBankAccount;
 import com.pec.personalexpensescontrol.repository.UserBankAccountRepository;
+import javassist.NotFoundException;
+import lombok.SneakyThrows;
 import org.bson.types.ObjectId;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +19,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.springframework.data.mongodb.core.query.Criteria.where;
+import static org.springframework.data.mongodb.core.query.Query.query;
 
 @Service
 public class BankAccountService {
@@ -30,9 +32,7 @@ public class BankAccountService {
         var userBankAccount = userBankAccountRepository.findByUserId(userId);
         if (userBankAccount.isPresent()) {
             List<BankAccount> bankAccounts = userBankAccount.get().getBankAccounts();
-            if (bankAccounts != null)
-                return bankAccounts;
-            return new ArrayList<>();
+            return bankAccounts != null ? bankAccounts : new ArrayList<>();
         }
         return new ArrayList<>();
     }
@@ -43,29 +43,23 @@ public class BankAccountService {
 
         BankAccount bankAccount = new BankAccount();
         new ModelMapper().map(newBankAccount, bankAccount);
-        bankAccount.setBankAccountCreatedDate(new Date());
-        bankAccount.setBankAccountLastUpdatedDate(new Date());
         Criteria criteria = where("userId").is(userId);
         Update update = new Update().addToSet("bankAccounts", bankAccount);
-        mongoTemplate.updateFirst(Query.query(criteria), update, UserBankAccount.class);
+        mongoTemplate.updateFirst(query(criteria), update, UserBankAccount.class);
     }
 
     public void updateBankAccountBalance(String userId, BankAccount bankAccount) throws Exception {
         var bankAccountToUpdateBalance = bankAccountExist(userId, bankAccount.getBankAccountId());
-        if (bankAccountToUpdateBalance.isEmpty())
-            throw new Exception("Conta bancária não existe");
-
-        List<BankAccount> bankAccounts = bankAccountToUpdateBalance.get().getBankAccounts();
-        bankAccounts.stream()
-                .filter(item -> item.getBankAccountId().equals(bankAccount.getBankAccountId()))
-                .findFirst()
-                .ifPresent(item -> {
-                    var createdDate = item.getBankAccountCreatedDate();
-                    item.setBankAccountCreatedDate(createdDate);
-                    item.setBankAccountLastUpdatedDate(new Date());
-                    item.setAccountBalance(item.getAccountBalance().add(bankAccount.getAccountBalance()));
-                });
-        userBankAccountRepository.save(bankAccountToUpdateBalance.get());
+        if (bankAccountToUpdateBalance.isPresent()) {
+            bankAccountToUpdateBalance.get().getBankAccounts().stream()
+                    .filter(item -> item.getBankAccountId().equals(bankAccount.getBankAccountId()))
+                    .findFirst()
+                    .ifPresent(item -> {
+                        item.setBankAccountLastUpdatedDate(new Date());
+                        item.setAccountBalance(item.getAccountBalance().add(bankAccount.getAccountBalance()));
+                    });
+            userBankAccountRepository.save(bankAccountToUpdateBalance.get());
+        } else throw new Exception("Conta bancária não existe");
     }
 
     public Optional<UserBankAccount> deleteBankAccount(String userId, ObjectId bankAccountId) {

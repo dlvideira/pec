@@ -30,7 +30,7 @@ public class UserService {
                 newUserRequest.getEmail(),
                 newUserRequest.getRole(),
                 false);
-        var createdUser = userManagementRepository.save(user);
+        userManagementRepository.save(user);
     }
 
     public Optional<User> updateEmail(String userId, String newUserEmail) throws Exception {

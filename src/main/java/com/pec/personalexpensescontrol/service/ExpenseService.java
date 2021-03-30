@@ -43,8 +43,6 @@ public class ExpenseService {
 
         Expense expense = new Expense();
         new ModelMapper().map(expenseBody, expense);
-        expense.setExpenseCreatedDate(new Date());
-        expense.setExpenseLastUpdatedDate(new Date());
         Criteria criteria = where("userId").is(userId);
         Update update = new Update().addToSet("expenses", expense);
         mongoTemplate.updateFirst(Query.query(criteria), update, UserExpense.class);
@@ -72,8 +70,7 @@ public class ExpenseService {
     public Optional<UserExpense> deleteExpense(String userId, ObjectId expenseId) {
         var user = userExpenseRepository.findByUserId(userId);
         if (user.isPresent()) {
-            List<Expense> userExpenses = user.get().getExpenses();
-            userExpenses.removeIf(item -> item.getExpenseId().equals(expenseId));
+            user.get().getExpenses().removeIf(item -> item.getExpenseId().equals(expenseId));
             userExpenseRepository.save(user.get());
             return user;
         }

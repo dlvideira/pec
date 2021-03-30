@@ -1,7 +1,5 @@
 package com.pec.personalexpensescontrol.model;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,9 +11,7 @@ import java.util.Date;
 
 @Data
 @AllArgsConstructor
-@NoArgsConstructor
 public class BankAccount {
-  //  @JsonSerialize(using= ToStringSerializer.class)
     private ObjectId bankAccountId = new ObjectId();
     private Date bankAccountCreatedDate;
     private Date bankAccountLastUpdatedDate;
@@ -26,4 +22,9 @@ public class BankAccount {
     @NotNull(message = "bankAccountNumber must not be null")
     private String bankAccountNumber;
     private BigDecimal accountBalance;
+
+    public BankAccount(){
+        bankAccountCreatedDate = new Date();
+        bankAccountLastUpdatedDate = new Date();
+    }
 }
